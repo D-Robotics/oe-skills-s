@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-hbdk-generating
+name: __SKILL_j6-plugin-__hbdk-generating
 description: 为基础网络结构生成从量化到编译的完整流程代码（set_march → Quant/DeQuant → 量化配置 → prepare → 校准 → QAT → export → convert → remove_io_op → statistics → compile HBM）。当用户需要同时覆盖量化和编译多个步骤时触发，如"帮我写量化编译全流程代码"、"Conv+BN+ReLU 量化部署"、"地平线量化编译"、"基础结构量化到 HBM"。即使用户没有明确说"全流程"，只要涉及从量化到编译的多个步骤都应触发。如果用户只需要量化或只需要编译，应路由到对应子 skill。关键词："量化编译"、"量化部署"、"全流程"、"set_march 到 HBM"、"地平线量化"、"Horizon 量化编译"、"基础结构量化"、"QAT 量化编译"。
 ---
 
@@ -15,14 +15,14 @@ description: 为基础网络结构生成从量化到编译的完整流程代码�
 
 本 Skill 必须按以下顺序调用子 skill，不得跳序：
 
-1. `j6-plugin-quantization`（路径：`j6-plugin-quantization/SKILL.md`）— 量化流程
+1. `__SKILL_j6-plugin-__quantization`（路径：`__SKILL_j6-plugin-__quantization/SKILL.md`）— 量化流程
 2. `j6-hbdk-export-compile`（路径：`j6-hbdk-export-compile/SKILL.md`）— 导出编译流程
 
 以 `export` 为界：export 之前属于量化，export 及之后属于导出编译。
 
 ## 为什么必须按这个顺序
 
-### 1) `j6-plugin-quantization`（量化）
+### 1) `__SKILL_j6-plugin-__quantization`（量化）
 
 先完成量化流程，产出校准后或 QAT 训练后的模型。量化流程包括：
 
@@ -49,7 +49,7 @@ description: 为基础网络结构生成从量化到编译的完整流程代码�
 
 ## 各子 skill 的职责边界
 
-### A. `j6-plugin-quantization`
+### A. `__SKILL_j6-plugin-__quantization`
 
 负责：
 - 设置 march
@@ -95,10 +95,10 @@ description: 为基础网络结构生成从量化到编译的完整流程代码�
 
 | march | 平台 | 说明 |
 |-------|------|------|
-| `"nash-p"` | J6P | 推荐，全局激活支持 float16 |
+| `"nash-p"` | RDK S600 | 推荐，全局激活支持 float16 |
 | `"nash-h"` | J6H | 全局激活支持 float16 |
-| `"nash-m"` | J6M | 全局激活为 qint8 |
-| `"nash-e"` | J6E | 全局激活为 qint8 |
+| `"nash-m"` | RDK S100P | 全局激活为 qint8 |
+| `"nash-e"` | RDK S100 | 全局激活为 qint8 |
 | `"nash-b"` | J6B | 全局激活为 qint8 |
 
 march 未确认前，不应继续后续步骤。
@@ -115,7 +115,7 @@ march 未确认前，不应继续后续步骤。
 ### 第四步：依次调用子 skill
 
 严格按顺序：
-1. `j6-plugin-quantization` — 产出 `calib_net`（仅校准）或 `qat_net`（校准+QAT）
+1. `__SKILL_j6-plugin-__quantization` — 产出 `calib_net`（仅校准）或 `qat_net`（校准+QAT）
 2. `j6-hbdk-export-compile` — 使用产出的模型，产出 HBM
 
 ### 第五步：完成后做整体一致性检查
@@ -167,10 +167,10 @@ model = MyNet()
 
 ### 规则 3：禁止在代码中展示子 skill 调用标签
 
-代码中 **不得** 出现子 skill 调用标签，如 `"Sub Skill 1: j6-plugin-quantization"`、`"子 Skill 1"` 等。流程分段只能使用模板中的注释格式：
+代码中 **不得** 出现子 skill 调用标签，如 `"Sub Skill 1: __SKILL_j6-plugin-__quantization"`、`"子 Skill 1"` 等。流程分段只能使用模板中的注释格式：
 
 ```python
-# ===== j6-plugin-quantization: 量化流程 =====
+# ===== __SKILL_j6-plugin-__quantization: 量化流程 =====
 # ===== j6-hbdk-export-compile: 导出编译流程 =====
 ```
 
@@ -251,14 +251,14 @@ def run_quantization_pipeline(march="nash-p"):  # 默认 nash-p，用户未指�
 
 ## 不适用场景
 
-- 只需要量化流程 → 直接调用 `j6-plugin-quantization`
+- 只需要量化流程 → 直接调用 `__SKILL_j6-plugin-__quantization`
 - 只需要导出编译流程（已有 QAT 模型）→ 直接调用 `j6-hbdk-export-compile`
 - 模型有动态控制流 → 本 skill 不覆盖 dynamic_block 场景，需要额外处理
 
 ## 快速自检清单
 
 - 用户已明确指定 march（未指定时默认 `nash-p`，不得自选其他值）
-- 是否按顺序调用了 `j6-plugin-quantization` → `j6-hbdk-export-compile`？
+- 是否按顺序调用了 `__SKILL_j6-plugin-__quantization` → `j6-hbdk-export-compile`？
 - 量化流程产出的 `qat_net` 是否被导出编译流程正确使用？
 - 两个子 skill 中的 march 是否一致？
 - 代码是否使用 `run_quantization_pipeline(march)` 函数包裹？（禁止脚本式平铺）

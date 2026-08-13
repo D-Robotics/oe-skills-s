@@ -16,7 +16,7 @@ Below we share an approach that uses hierarchical planning followed by phased ex
 output
 Understood. Please tell me your task description, and I will break it down into 3–5 high‑level stages and record the key rules.
 
-"I want to quantize and deploy an ONNX classification model on Horizon J6E, write deployment code, cross‑compile it in a container, push it to the development board {BOARD_IP}, and test whether the classification results align with the floating‑point model.
+"I want to quantize and deploy an ONNX classification model on Horizon RDK S100, write deployment code, cross‑compile it in a container, push it to the development board {BOARD_IP}, and test whether the classification results align with the floating‑point model.
 The docker container for testing is ****.
 The working directory is /open_explorer/work_dir/. Do not read any files outside this directory.
 The model path in the container is: /open_explorer/work_dir/models/resnet50.onnx.

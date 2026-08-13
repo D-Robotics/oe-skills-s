@@ -68,7 +68,7 @@ for (int32_t input_index = 0; input_index < input_count; ++input_index) {
       const int64_t next_stride = input_tensor.properties.stride[i + 1];
       const int64_t next_dim = input_tensor.properties.validShape.dimensionSize[i + 1];
       const int64_t cur_stride = next_stride * next_dim;
-      // **分支**：J6P/H 按 64 对齐，其余按 32 对齐
+      // **分支**：RDK S600/H 按 64 对齐，其余按 32 对齐
       input_tensor.properties.stride[i] = ALIGN(cur_stride);
     }
   }
@@ -102,7 +102,7 @@ for (int32_t input_index = 0; input_index < input_count; ++input_index) {
       const int64_t next_stride = input_tensor.properties.stride[i + 1];
       const int64_t next_dim = input_tensor.properties.validShape.dimensionSize[i + 1];
       const int64_t cur_stride = next_stride * next_dim;
-      // **分支**：J6P/H 按 64 对齐，其余按 32 对齐
+      // **分支**：RDK S600/H 按 64 对齐，其余按 32 对齐
       input_tensor.properties.stride[i] = ALIGN(cur_stride);
     }
   }

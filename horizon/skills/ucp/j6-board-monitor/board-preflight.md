@@ -18,8 +18,8 @@ ssh root@<board_ip> "cat /sys/kernel/debug/ion/heaps/system"
 
 | 板端 | 总 ION | CMA heap 单次分配上限 | 实际可用（模型+KV cache） |
 |------|--------|---------------------|------------------------|
-| J6P (nash-p) | ~4GB | ~2GB | ~3.5GB（系统占用约 500MB） |
-| J6E/J6M (nash-e/m) | ~2GB | ~1GB | ~1.5GB |
+| RDK S600 (nash-p) | ~4GB | ~2GB | ~3.5GB（系统占用约 500MB） |
+| RDK S100/RDK S100P (nash-e/m) | ~2GB | ~1GB | ~1.5GB |
 
 ### 2. 模型内存需求估算
 
@@ -48,10 +48,10 @@ ssh root@<board_ip> "cat /sys/kernel/debug/ion/heaps/system"
 
 | 模型 | 最小板端 | 推荐 max_kvcache_len | core_num | L2M 配置 | 备注 |
 |------|---------|---------------------|----------|---------|------|
-| Qwen3-VL-2B (W8) | J6P (4核) | 512 (ION<4GB) / 1024 (ION≥4GB) | 4 | 6:6:6:6 | 模型约 2.5GB |
-| Qwen2.5-VL-7B (W8) | J6P (4核) | 512 | 4 | 6:6:6:6 | 模型约 7GB，需分片 |
-| InternVL-1B (W8) | J6E 或 J6P | 512 | 1 | 24:0:0:0 | 模型约 1.2GB |
-| InternVL-2B (W8) | J6E 或 J6P | 512 | 1 | 24:0:0:0 | 模型约 2GB |
+| Qwen3-VL-2B (W8) | RDK S600 (4核) | 512 (ION<4GB) / 1024 (ION≥4GB) | 4 | 6:6:6:6 | 模型约 2.5GB |
+| Qwen2.5-VL-7B (W8) | RDK S600 (4核) | 512 | 4 | 6:6:6:6 | 模型约 7GB，需分片 |
+| InternVL-1B (W8) | RDK S100 或 RDK S600 | 512 | 1 | 24:0:0:0 | 模型约 1.2GB |
+| InternVL-2B (W8) | RDK S100 或 RDK S600 | 512 | 1 | 24:0:0:0 | 模型约 2GB |
 
 ### 4. HB_DNN_USER_DEFINED_L2M_SIZES 配置
 

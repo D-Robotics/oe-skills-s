@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-set-march
+name: __SKILL_j6-plugin-__set-march
 description: 在适配 horizon_plugin_pytorch 的过程中，为脚本或入口添加 march 设置逻辑。
 ---
 

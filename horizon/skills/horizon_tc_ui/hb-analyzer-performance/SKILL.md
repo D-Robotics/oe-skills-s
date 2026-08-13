@@ -5,7 +5,7 @@ description: 使用 hb_analyzer 分析 J5/J6 模型性能。当用户提到模�
 
 # HB Analyzer 模型性能分析
 
-当用户需要在 Horizon Robotics J5/J6 平台上使用 hb_analyzer 工具分析模型性能时，使用此技能。
+当用户需要在 Horizon Robotics J5/RDK S 系列平台上使用 hb_analyzer 工具分析模型性能时，使用此技能。
 
 ## 何时使用
 

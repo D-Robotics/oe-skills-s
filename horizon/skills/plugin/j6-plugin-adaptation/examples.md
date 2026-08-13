@@ -1,6 +1,6 @@
 # Horizon 完整 QAT 适配 Skill - 使用示例
 
-本示例文档说明何时应触发 `j6-plugin-adaptation`，以及 agent 应如何按固定顺序编排多个子 skill，为浮点模型完成 Horizon QAT 适配。
+本示例文档说明何时应触发 `__SKILL_j6-plugin-__adaptation`，以及 agent 应如何按固定顺序编排多个子 skill，为浮点模型完成 Horizon QAT 适配。
 
 ## 触发方式
 
@@ -53,7 +53,7 @@
 |------|----------------|------|
 | `march` | **必须** | 没确认前不能进入第一步之后的流程 |
 | 部署输入/输出边界 | 通常需要 | 决定 quant/dequant 如何插入 |
-| 是否存在动态控制流 | 需要结合代码判断 | 决定是否用 `j6-plugin-dynamic-block` |
+| 是否存在动态控制流 | 需要结合代码判断 | 决定是否用 `__SKILL_j6-plugin-__dynamic-block` |
 | 当前阶段目标 | calibration / qat / validation | 决定 fake quantize 状态 |
 
 ---
@@ -62,11 +62,11 @@
 
 当用户请求完整 Horizon QAT 适配时，agent 不应跳着做，而应按以下顺序：
 
-1. `j6-plugin-set-march`
-2. `j6-plugin-insert-quant-dequant`
-3. `j6-plugin-dynamic-block`
-4. `j6-plugin-prepare`
-5. `j6-plugin-set-fake-quantize`
+1. `__SKILL_j6-plugin-__set-march`
+2. `__SKILL_j6-plugin-__insert-quant-dequant`
+3. `__SKILL_j6-plugin-__dynamic-block`
+4. `__SKILL_j6-plugin-__prepare`
+5. `__SKILL_j6-plugin-__set-fake-quantize`
 
 这个顺序不能随意打乱。
 
@@ -84,7 +84,7 @@
 
 **正确执行方式：**
 
-agent 首先识别这是一个“完整 QAT 适配”需求，然后立刻进入第一步 skill：`j6-plugin-set-march`。
+agent 首先识别这是一个“完整 QAT 适配”需求，然后立刻进入第一步 skill：`__SKILL_j6-plugin-__set-march`。
 
 此时因为 march 还没给，必须先问：
 
@@ -110,23 +110,23 @@ agent 首先识别这是一个“完整 QAT 适配”需求，然后立刻进入
 
 **Agent 执行顺序：**
 
-1. 调用 `j6-plugin-set-march`
+1. 调用 `__SKILL_j6-plugin-__set-march`
    - 在脚本入口、模型构建前插入：
    ```python
    horizon.march.set_march(horizon.march.March.NASH_P)
    ```
 
-2. 调用 `j6-plugin-insert-quant-dequant`
+2. 调用 `__SKILL_j6-plugin-__insert-quant-dequant`
    - 在模型输入边界加 `QuantStub`
    - 在模型输出边界加 `DeQuantStub`
 
-3. 调用 `j6-plugin-dynamic-block`
+3. 调用 `__SKILL_j6-plugin-__dynamic-block`
    - 若 `forward` 中有动态循环/动态分支，并且块内有 Tensor/function 逻辑，则加 `Tracer.dynamic_block(...)`
 
-4. 调用 `j6-plugin-prepare`
+4. 调用 `__SKILL_j6-plugin-__prepare`
    - 用 `prepare(...)` 生成 QAT 模型
 
-5. 调用 `j6-plugin-set-fake-quantize`
+5. 调用 `__SKILL_j6-plugin-__set-fake-quantize`
    - 根据目标阶段设置 `QAT/CALIBRATION/VALIDATION`
 
 ---
@@ -141,9 +141,9 @@ agent 首先识别这是一个“完整 QAT 适配”需求，然后立刻进入
 
 **正确行为：**
 
-这时不应该触发 `j6-plugin-adaptation`，而应该直接调用：
+这时不应该触发 `__SKILL_j6-plugin-__adaptation`，而应该直接调用：
 
-- `j6-plugin-insert-quant-dequant`
+- `__SKILL_j6-plugin-__insert-quant-dequant`
 
 因为这只是局部需求，不是完整适配链路。
 
@@ -154,11 +154,11 @@ agent 首先识别这是一个“完整 QAT 适配”需求，然后立刻进入
 当识别到完整适配需求时，agent 应按这种思路工作：
 
 ```text
-Step 1. 调用 j6-plugin-set-march
-Step 2. 调用 j6-plugin-insert-quant-dequant
-Step 3. 调用 j6-plugin-dynamic-block
-Step 4. 调用 j6-plugin-prepare
-Step 5. 调用 j6-plugin-set-fake-quantize
+Step 1. 调用 __SKILL_j6-plugin-__set-march
+Step 2. 调用 __SKILL_j6-plugin-__insert-quant-dequant
+Step 3. 调用 __SKILL_j6-plugin-__dynamic-block
+Step 4. 调用 __SKILL_j6-plugin-__prepare
+Step 5. 调用 __SKILL_j6-plugin-__set-fake-quantize
 ```
 
 而不是直接一次性说：
@@ -180,13 +180,13 @@ Step 5. 调用 j6-plugin-set-fake-quantize
 - 后续平台相关逻辑可能落在错误 march 上
 
 **正确做法：**
-- 先完成 `j6-plugin-set-march`
+- 先完成 `__SKILL_j6-plugin-__set-march`
 - 再进入后续步骤
 
 ### 场景 2：先 prepare，后面再补 quant/dequant 或 dynamic_block
 
 **问题：**
-- 这会违背 `j6-plugin-prepare` 的结构稳定性约束
+- 这会违背 `__SKILL_j6-plugin-__prepare` 的结构稳定性约束
 - prepare 之后再改结构，容易导致图/scale/hook 相关问题
 
 **正确做法：**
@@ -210,4 +210,4 @@ Step 5. 调用 j6-plugin-set-fake-quantize
 - 是否按顺序执行了 5 个子 skill？
 - quant/dequant 和 dynamic block 是否在 prepare 前完成？
 - fake quantize 是否根据当前阶段设置正确？
-- 如果只是局部需求，是否避免误触发整个 `j6-plugin-adaptation`？
+- 如果只是局部需求，是否避免误触发整个 `__SKILL_j6-plugin-__adaptation`？

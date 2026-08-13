@@ -74,7 +74,7 @@ March.get("nash-e")  # 按名称查找枚举成员
 | 加载 march 配置数据 | `BpuMarchDesc`, `get_by_march_name` | 加载 pub_fb/priv_fb flatbuffer |
 | 注册配置到编译器 | `registry_config_data` | 将 config 推入编译器内存注册表 |
 | Nash 系列有哪些变体 | `nash-e`, `nash-m`, `nash-p`, `nash-h`, `nash-b` | 7 种 march 变体 |
-| Journey 6 目标架构 | `nash`, `march`, `J6` | J6 系列对应 Nash 架构 |
+| Journey 6 目标架构 | `nash`, `march`, `RDK` | RDK S 系列对应 Nash 架构 |
 | QNX 平台判断 | `maybe_qnx`, `nash-b` | nash-b march 对应 QNX 平台 |
 | 编译器 March 枚举 | `create_march_enum`, `March`, `MarchBase` | 在 hbdk4.compiler.march 中动态构建 |
 | March 系列分类 | `MarchSeries`, `series` | 目前仅有 MarchSeries.nash |

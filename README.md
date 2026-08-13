@@ -85,11 +85,11 @@
 | 模型延时实测      | 帮我在开发板`xx.xx.xx.xx`上测试一下`xxx.hbm`的延时                                                                           | j6-ucp-model-perf-eval           |
 | 模型延时分析      | 帮我分析一下`xxx.hbm`的延时瓶颈，开发板`xx.xx.xx.xx`                                                                          | hb-analyzer-performance          |
 | onnx精度优化    | 帮我对模型`xxx.onnx`做精度调优，校准数据路径为`{calib_data}`，使用`{OE_docker}`                                                     | j6-hmct-cosine-similarity-tuning |
-| torch模型精度优化 | 模型校准后验证集 top-1 从浮点的 78% 掉到 55%。请帮我分析和调优，校准和评测代码：`{calib.py}`                                                   | j6-plugin-precision-tuning       |
-| 量化配置检查      | 帮我分析 model\_check\_result.txt，看看量化配置哪里有问题                                                                      | j6-plugin-model-check-result     |
+| torch模型精度优化 | 模型校准后验证集 top-1 从浮点的 78% 掉到 55%。请帮我分析和调优，校准和评测代码：`{calib.py}`                                                   | __SKILL_j6-plugin-__precision-tuning       |
+| 量化配置检查      | 帮我分析 model\_check\_result.txt，看看量化配置哪里有问题                                                                      | __SKILL_j6-plugin-__model-check-result     |
 | 编写hbm评测代码   | 帮我评测一下`xxx.hbm`的精度，calib评测代码为`val.py`，开发板`xx.xx.xx.xx`。若网络延迟较高，减少评测帧数到100                                      | j6-ucp-hbm-infer                 |
 | 编写hbm部署代码   | 我有四个小模型，放在`{model_path}`，这几个模型间没有数据依赖，可同时推理，帮我写一下ucp部署代码，测试使用开发板`xx.xx.xx.xx`                                  | j6-ucp-infer-generating          |
-| 单算子测试验证     | 帮我写一个 Conv2d 的量化编译全流程代码，输入是 (1, 3, 32, 32)，march 为 nash-p                                                      | j6-plugin-hbdk-generating        |
+| 单算子测试验证     | 帮我写一个 Conv2d 的量化编译全流程代码，输入是 (1, 3, 32, 32)，march 为 nash-p                                                      | __SKILL_j6-plugin-__hbdk-generating        |
 | onnx模型部署    | 需综合调用多个skill，具体使用经验请参考文档[onnx模型部署全流程示例](docs/zh/onnx-deployment/index.md)    |                                  |
 | pytorch模型部署 | 需综合调用多个skill，具体使用经验请参考文档[pytorch模型部署全流程示例](docs/zh/pytorch-deployment/index.md) |                                  |
 
@@ -153,13 +153,13 @@ OE-Skills/
 
 | Skill                        | 功能                     | 触发场景                                       |
 | ---------------------------- | ---------------------- | ------------------------------------------ |
-| j6-plugin-adaptation         | 浮点 PyTorch 模型 QAT 工具适配 | 为模型适配`horizon_plugin_pytorch`              |
-| j6-plugin-export             | QAT 模型导出 HBIR IR       | `hbdk4.export` 导出 QAT 模型                   |
-| j6-plugin-hbdk-generating    | 量化到编译全流程代码生成           | 同时覆盖量化和编译多个步骤                              |
-| j6-plugin-model-check-result | 量化配置检查结果分析             | 分析`model_check_result.txt`，定位结构/qconfig 问题 |
-| j6-plugin-graph-diff         | FX Graph 计算图差异对比       | 定位两份计算图的结构与算子参数差异                          |
-| j6-plugin-consistency-debug  | 训练-部署一致性问题定位           | QAT 训练正常但 export/convert/compile/HBM 掉点    |
-| j6-plugin-precision-tuning   | PyTorch 侧精度调优          | calibration 后精度不达标、QAT loss 不收敛、混合精度调优     |
+| __SKILL_j6-plugin-__adaptation         | 浮点 PyTorch 模型 QAT 工具适配 | 为模型适配`horizon_plugin_pytorch`              |
+| __SKILL_j6-plugin-__export             | QAT 模型导出 HBIR IR       | `hbdk4.export` 导出 QAT 模型                   |
+| __SKILL_j6-plugin-__hbdk-generating    | 量化到编译全流程代码生成           | 同时覆盖量化和编译多个步骤                              |
+| __SKILL_j6-plugin-__model-check-result | 量化配置检查结果分析             | 分析`model_check_result.txt`，定位结构/qconfig 问题 |
+| __SKILL_j6-plugin-__graph-diff         | FX Graph 计算图差异对比       | 定位两份计算图的结构与算子参数差异                          |
+| __SKILL_j6-plugin-__consistency-debug  | 训练-部署一致性问题定位           | QAT 训练正常但 export/convert/compile/HBM 掉点    |
+| __SKILL_j6-plugin-__precision-tuning   | PyTorch 侧精度调优          | calibration 后精度不达标、QAT loss 不收敛、混合精度调优     |
 
 ### HMCT 模块（onnx 量化）
 
@@ -175,7 +175,7 @@ OE-Skills/
 | j6-ucp-infer-generating        | UCP 推理 C++ 代码生成              | UCP/DNN 推理接口用法、API 参数、模型加载、tensor 内存、Cache 同步    |
 | j6-ucp-hbm-infer               | hbm\_infer Python 客户端代码生成    | X86 侧 Python 调用 HBM 模型推理、HbmRpcSession/HTensor   |
 | j6-ucp-model-perf-eval         | hrt\_model\_exec perf 板端性能评测 | 模型性能测试、benchmark、thread\_num/core\_id 扫描、吞吐/延迟对比 |
-| j6-ucp-perfetto-trace-catcher  | Perfetto trace 板端抓取          | 抓取 UCP`.pftrace`、J6 开发板 trace 采集                 |
+| j6-ucp-perfetto-trace-catcher  | Perfetto trace 板端抓取          | 抓取 UCP`.pftrace`、RDK S 系列 开发板 trace 采集                 |
 | j6-ucp-perfetto-trace-analysis | Perfetto trace 性能瓶颈分析        | UCP 推理 trace 诊断、延迟/流水线 stall/BPU 空隙分析            |
 | j6-board-monitor               | 板端资源监控与采集                    | BPU 占用率、DDR 带宽、内存使用、LLM 推理期间资源监控                 |
 

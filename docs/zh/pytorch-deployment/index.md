@@ -12,7 +12,7 @@
 
 ```plain&#x20;text
 你是一个任务规划专家。我会给你一个任务，请将达成该目标的过程拆分为 3~5 个阶段，每个阶段用一句话描述，无需给出子步骤和技术细节，但需要记录一些整个任务都要遵守的规则，输出格式为.md并存放到工作路径的子文件夹plan下面，便于后续阶段参照你的计划顺利开展。
-任务描述：我想在地平线J6P平台上部署yolov5s，请帮我创建新的conda环境，模型量化（能进行calib，qat，export），精度调优，模型编译，hbm精度验证及ucp代码编写。
+任务描述：我想在地平线RDK S600平台上部署yolov5s，请帮我创建新的conda环境，模型量化（能进行calib，qat，export），精度调优，模型编译，hbm精度验证及ucp代码编写。
 最终要求: hbm精度损失相较于浮点不超过1%，开发板10.xx.xx.xx实测延时控制在5ms内。
 工作路径: /workspace/00_yolov5。部署相关产物请新建文件夹tmp_output存储，不要影响原代码。
 工作环境：新建的conda环境,可以使用gpu卡3，4
@@ -23,7 +23,7 @@
 
 1. 量化工具：对于pytorch模型应使用horizon\_plugin\_pytorch做量化适配，不应由于任何异常回退到导出onnx走hmct量化，除非是用户授意允许。
 
-2. 量化基础配置：J6E/M应为全int8，J6H/P应为fp16+int8
+2. 量化基础配置：RDK S100/S100P应为全int8，J6H/RDK S600应为fp16+int8
 
 针对该提示词，拆解出了五个阶段：环境搭建，模型准备与 Plugin 量化适配，精度调优，导出编译与 HBM 精度验证，UCP 部署代码编写。
 
@@ -46,17 +46,17 @@ OE开发包路径：/package/02_OE/horizon_j6_open_explorer_{version}
 
 4. **模型准备与 Plugin 量化适配**
 
-对于量化适配，应检查计划中skill顺次调用了三个skill：量化适配`j6-plugin-adaptation`，适配检查`j6-plugin-model-check-result`，模型导出`j6-plugin-export`。
+对于量化适配，应检查计划中skill顺次调用了三个skill：量化适配`__SKILL_j6-plugin-__adaptation`，适配检查`__SKILL_j6-plugin-__model-check-result`，模型导出`__SKILL_j6-plugin-__export`。
 
-1. 量化适配`j6-plugin-adaptation`skill的内容简介：
+1. 量化适配`__SKILL_j6-plugin-__adaptation`skill的内容简介：
 
 这个skill下面有五个子skill：
 
-2. 适配检查`j6-plugin-model-check-result`skill的内容简介：
+2. 适配检查`__SKILL_j6-plugin-__model-check-result`skill的内容简介：
 
 该skill主要会做如下五个方面的异常检查：
 
-3. 模型导出`j6-plugin-export`skill的内容简介：
+3. 模型导出`__SKILL_j6-plugin-__export`skill的内容简介：
 
 该skill会构建一个独立的export.py，不在训练/评测脚本中添加导出逻辑，不改模型结构、不改 qconfig，加载前序步骤生成的量化权重。会在导出过程中检查模型正确包含FakeQuantize 模块。
 
@@ -70,7 +70,7 @@ OE开发包路径：/package/02_OE/horizon_j6_open_explorer_{version}
 
 6. **导出编译与 HBM 精度验证**
 
-**导出编译**：agent可能会选择`j6-plugin-hbdk-generating` 来帮忙生成基础的编译代码（默认全删量化反量化），但若您需要将输入改造成pyramid/resizer，或者进行一些比较复杂的节点删除任务（如全删量化节点，但homo-offset相关的不要改动），建议引导agent调用`j6-hbdk-compile`，可支持更复杂的编译场景。
+**导出编译**：agent可能会选择`__SKILL_j6-plugin-__hbdk-generating` 来帮忙生成基础的编译代码（默认全删量化反量化），但若您需要将输入改造成pyramid/resizer，或者进行一些比较复杂的节点删除任务（如全删量化节点，但homo-offset相关的不要改动），建议引导agent调用`j6-hbdk-compile`，可支持更复杂的编译场景。
 
 **hbm精度验证**：若您没有可直连的开发板，或者是全量测试精度需要太长时间，可引导agent改用quantized.bc（与hbm输出二进制一致）跑几个关键case的可视化。若有可用的开发板，则agent会调用`j6-ucp-hbm-infer`编写hbm\_infer代码。
 

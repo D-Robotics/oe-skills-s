@@ -42,7 +42,7 @@ set_march → 定义模型（含 Quant/DeQuant）→ 配置量化参数 → prep
 
 > 帮我生成 Conv+BN+ReLU+Linear 网络的量化编译代码，从 set_march 到编译出 HBM
 
-> 在地平线 J6P 上量化部署一个简单的分类网络
+> 在地平线 RDK S600 上量化部署一个简单的分类网络
 
 > 帮我做 QAT 量化训练然后编译出 HBM，模型是 Conv+ReLU
 
@@ -52,7 +52,7 @@ set_march → 定义模型（含 Quant/DeQuant）→ 配置量化参数 → prep
 
 > 帮我给 nn.MultiheadAttention(embed_dim=128, num_heads=4) 做量化流程代码，校准就行不需要 QAT，march 用 nash-p
 
-> 我有个简单的 TransformerEncoder（1 层，embed_dim=64），帮我量化部署到 J6E
+> 我有个简单的 TransformerEncoder（1 层，embed_dim=64），帮我量化部署到 RDK S100
 
 ### 多输入网络
 
@@ -90,7 +90,7 @@ set_march → 定义模型（含 Quant/DeQuant）→ 配置量化参数 → prep
 
 触发 Skill 后，会依次确认以下信息：
 
-1. **目标平台（march）** — 必选，从 J6P/J6H/J6M/J6E/J6B 中选择
+1. **目标平台（march）** — 必选，从 RDK S600/J6H/RDK S100P/RDK S100/J6B 中选择
 2. **是否进行 QAT 训练** — 校准后直接导出，还是校准 + QAT 训练再导出
 3. **模型结构和输入信息** — 默认 Conv+BN+ReLU+Linear，(1,3,32,32)，可按需修改
 

@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-insert-quant-dequant
+name: __SKILL_j6-plugin-__insert-quant-dequant
 description: 为浮点 PyTorch 模型插入部署边界 QuantStub/DeQuantStub（horizon_plugin_pytorch）。满足：quant/dequant 是部署边界；每个输入/输出各自独立 stub；QuantStub 初始化不设置 scale。
 ---
 

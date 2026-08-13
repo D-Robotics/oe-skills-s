@@ -1,11 +1,11 @@
 ---
 name: j6-board-monitor
-description: J6 开发板资源监控与推理期间资源采集。当用户需要监控 BPU 占用率、DDR 带宽、内存使用时触发。支持三种场景：(1) Scenario A：CV 模型在指定帧率（如 10Hz）推理期间同步采集 BPU/DDR/内存数据；(2) Scenario B：独立监控板端硬件资源（无推理负载）；(3) Scenario C：LLM 模型循环推理期间同步采集资源数据，使用 simple_demo_request 保持模型持续运行。关键词：BPU 监控、DDR 带宽、内存使用、资源监控、设定帧率推理、LLM 推理监控、hrt_ucp_monitor、hrut_ddr、simple_demo_request、板端资源评估。注意：不要用 hbm_infer/gRPC 做高频推理监控（通信开销太大）。
+description: RDK S 系列开发板资源监控与推理期间资源采集。当用户需要监控 BPU 占用率、DDR 带宽、内存使用时触发。支持三种场景：(1) Scenario A：CV 模型在指定帧率（如 10Hz）推理期间同步采集 BPU/DDR/内存数据；(2) Scenario B：独立监控板端硬件资源（无推理负载）；(3) Scenario C：LLM 模型循环推理期间同步采集资源数据，使用 simple_demo_request 保持模型持续运行。关键词：BPU 监控、DDR 带宽、内存使用、资源监控、设定帧率推理、LLM 推理监控、hrt_ucp_monitor、hrut_ddr、simple_demo_request、板端资源评估。注意：不要用 hbm_infer/gRPC 做高频推理监控（通信开销太大）。
 ---
 
 # Board Monitor
 
-通过 SSH 在 J6 开发板上执行 BPU 占用率、DDR 带宽、内存使用的实时监控。支持三种场景：
+通过 SSH 在 RDK S 系列 开发板上执行 BPU 占用率、DDR 带宽、内存使用的实时监控。支持三种场景：
 - **Scenario A**：CV 模型在受控帧率推理期间同步采集资源数据（使用 `hrt_model_exec`）
 - **Scenario B**：独立监控板端硬件资源（无推理负载）
 - **Scenario C**：LLM 模型在循环推理期间同步采集资源数据（使用 `simple_demo_request`）
@@ -69,11 +69,11 @@ description: J6 开发板资源监控与推理期间资源采集。当用户需�
 BOARD_TYPE=$(grep '^BOARD_TYPE=' .horizon/.env.board | head -1 | cut -d= -f2)
 
 if echo "$BOARD_TYPE" | grep -q "nash-p"; then
-  # J6P: 4 BPU cores, hrut_ddr 需要 per-core 参数
+  # RDK S600: 4 BPU cores, hrut_ddr 需要 per-core 参数
   DDR_TYPE="bpu_p0"
   BPU_CORES=4
 else
-  # J6E: 1 BPU core, hrut_ddr 使用统一参数
+  # RDK S100: 1 BPU core, hrut_ddr 使用统一参数
   DDR_TYPE="bpu"
   BPU_CORES=1
 fi
@@ -421,7 +421,7 @@ scp root@<IP>:<BOARD_WORKDIR>/inference_pass2.log ./
 
 > **Scenario C 结果取值规则**：LLM 推理期间资源波动较大（prefill vs decode 阶段差异显著），报告中 BPU/DDR/内存指标应取**监控期间所有采样点的最大值**，而非平均值。
 
-**hrut_ddr `-t` 参数**：使用 Step 2 平台检测得到的 `DDR_TYPE`（J6E: `bpu`，J6P: `bpu_p0`）。
+**hrut_ddr `-t` 参数**：使用 Step 2 平台检测得到的 `DDR_TYPE`（RDK S100: `bpu`，RDK S600: `bpu_p0`）。
 
 > **关键**：监控工具必须在推理**之前**启动（上方案例中通过同一条 SSH 命令保证顺序），确保捕获到完整的推理期间数据。
 
@@ -503,7 +503,7 @@ ssh root@<IP> "rm -rf /tmp/remote_bpu /tmp/hrt_lib /tmp/board_inputs /tmp/board_
 ## BPU 占用率
 - 平均: <avg_bpu>%
 - 峰值: <peak_bpu>%
-- (J6P) 各核心: Core0=<c0>%, Core1=<c1>%, Core2=<c2>%, Core3=<c3>%
+- (RDK S600) 各核心: Core0=<c0>%, Core1=<c1>%, Core2=<c2>%, Core3=<c3>%
 
 ## DDR 带宽
 | 指标 | hrut_ddr | hrt_ucp_monitor |
@@ -536,7 +536,7 @@ BPU 是否有余量，DDR 带宽是否接近上限，内存是否充足>
 
 1. **严禁使用 hbm_infer / gRPC 进行推理监控** — gRPC 通信开销约 6.8s/帧（ana-002 实测数据：目标 10Hz，实际仅 0.148Hz），必须在板端直接用 `hrt_model_exec`
 2. **严禁轮询循环** — 所有监控命令必须使用 `-n` 有界参数。禁止 `while true; do ...; sleep N; done` 或 `sleep+tail` 模式
-3. **平台参数必须适配** — hrut_ddr 的 `-t` 参数：J6E 用 `bpu`，J6P 用 `bpu_p0`。错误参数会导致 `Error: Open failed!`
+3. **平台参数必须适配** — hrut_ddr 的 `-t` 参数：RDK S100 用 `bpu`，RDK S600 用 `bpu_p0`。错误参数会导致 `Error: Open failed!`
 4. **hrut_ddr 与 hrt_ucp_monitor 互斥** — 两者都独占访问 DDR 性能计数器设备文件，同时运行会导致 `hrut_ddr` 报 `Error: Open failed!`。**必须分两轮执行**：第一轮 `hrt_ucp_monitor` + 推理（BPU + 内存），第二轮 `hrut_ddr` + 推理（DDR 带宽）。两轮使用相同推理参数以保证数据一致性
 5. **监控先于推理启动** — 每轮内监控工具必须在推理之前启动，确保捕获完整的推理期间数据
 6. **SSH 失败时明确报错** — 不要静默跳过，提示用户检查网络和板卡状态

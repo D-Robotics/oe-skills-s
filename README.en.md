@@ -102,12 +102,12 @@ Install this skill: https://github.com/HorizonRobotics/OE-Skills/blob/main/agent
 <tr>
 <td>PyTorch model accuracy optimization</td>
 <td>After calibration, the validation top-1 dropped from 78% (float) to 55%. Please help me analyze and tune. Calibration/evaluation code: <code>{calib.py}</code></td>
-<td>j6-plugin-precision-tuning</td>
+<td>__SKILL_j6-plugin-__precision-tuning</td>
 </tr>
 <tr>
 <td>Quantization config check</td>
 <td>Help me analyze model_check_result.txt to see where the quantization config is problematic</td>
-<td>j6-plugin-model-check-result</td>
+<td>__SKILL_j6-plugin-__model-check-result</td>
 </tr>
 <tr>
 <td>Write HBM evaluation code</td>
@@ -122,7 +122,7 @@ Install this skill: https://github.com/HorizonRobotics/OE-Skills/blob/main/agent
 <tr>
 <td>Single operator test verification</td>
 <td>Help me write a full quantization-compilation pipeline for Conv2d, input shape (1, 3, 32, 32), march nash-p</td>
-<td>j6-plugin-hbdk-generating</td>
+<td>__SKILL_j6-plugin-__hbdk-generating</td>
 </tr>
 <tr>
 <td>ONNX model deployment</td>
@@ -194,13 +194,13 @@ OE-Skills/
 
 | Skill                        | Function                     | Trigger Scenarios                                       |
 | ---------------------------- | ---------------------- | ------------------------------------------ |
-| j6-plugin-adaptation         | Floating PyTorch model QAT tool adaptation | Adapting a model for `horizon_plugin_pytorch`              |
-| j6-plugin-export             | QAT model export to HBIR IR       | Exporting QAT model via `hbdk4.export`                   |
-| j6-plugin-hbdk-generating    | Full quantization‑to‑compilation code generation           | Covering multiple quantization and compilation steps simultaneously                              |
-| j6-plugin-model-check-result | Quantization config check result analysis             | Analyzing `model_check_result.txt` to locate structure/qconfig issues |
-| j6-plugin-graph-diff         | FX Graph computational graph diff comparison       | Locating structural and operator parameter differences between two graphs                          |
-| j6-plugin-consistency-debug  | Training‑deployment consistency issue diagnosis           | QAT training normal but export/convert/compile/HBM accuracy drops    |
-| j6-plugin-precision-tuning   | PyTorch‑side accuracy tuning          | Calibration accuracy below target, QAT loss not converging, mixed‑precision tuning     |
+| __SKILL_j6-plugin-__adaptation         | Floating PyTorch model QAT tool adaptation | Adapting a model for `horizon_plugin_pytorch`              |
+| __SKILL_j6-plugin-__export             | QAT model export to HBIR IR       | Exporting QAT model via `hbdk4.export`                   |
+| __SKILL_j6-plugin-__hbdk-generating    | Full quantization‑to‑compilation code generation           | Covering multiple quantization and compilation steps simultaneously                              |
+| __SKILL_j6-plugin-__model-check-result | Quantization config check result analysis             | Analyzing `model_check_result.txt` to locate structure/qconfig issues |
+| __SKILL_j6-plugin-__graph-diff         | FX Graph computational graph diff comparison       | Locating structural and operator parameter differences between two graphs                          |
+| __SKILL_j6-plugin-__consistency-debug  | Training‑deployment consistency issue diagnosis           | QAT training normal but export/convert/compile/HBM accuracy drops    |
+| __SKILL_j6-plugin-__precision-tuning   | PyTorch‑side accuracy tuning          | Calibration accuracy below target, QAT loss not converging, mixed‑precision tuning     |
 
 ### HMCT Module (ONNX Quantization)
 
@@ -218,7 +218,7 @@ OE-Skills/
 | j6-ucp-infer-generating        | UCP inference C++ code generation              | UCP/DNN inference API usage, parameter details, model loading, tensor memory, Cache synchronization    |
 | j6-ucp-hbm-infer               | hbm\_infer Python client code generation    | X86‑side Python HBM model inference via HbmRpcSession/HTensor   |
 | j6-ucp-model-perf-eval         | hrt\_model\_exec perf on‑board performance evaluation | Model performance testing, benchmarking, thread\_num/core\_id scanning, throughput/latency comparisons |
-| j6-ucp-perfetto-trace-catcher  | Perfetto trace capture on board          | Capturing UCP `.pftrace`, J6 dev board trace collection                 |
+| j6-ucp-perfetto-trace-catcher  | Perfetto trace capture on board          | Capturing UCP `.pftrace`, RDK S series dev board trace collection                 |
 | j6-ucp-perfetto-trace-analysis | Perfetto trace performance bottleneck analysis        | UCP inference trace diagnostics, latency/pipeline stall/BPU gap analysis            |
 | j6-board-monitor               | On‑board resource monitoring and collection                    | BPU utilization, DDR bandwidth, memory usage, resource monitoring during LLM inference                 |
 

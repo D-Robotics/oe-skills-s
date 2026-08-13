@@ -1,6 +1,6 @@
 # Horizon `model_check_result` 分析 Skill - 使用示例
 
-本示例文档说明何时触发 `j6-plugin-model-check-result`，以及如何基于 `model_check_result.txt` 给出可落地的排查结论。
+本示例文档说明何时触发 `__SKILL_j6-plugin-__model-check-result`，以及如何基于 `model_check_result.txt` 给出可落地的排查结论。
 
 ## 触发方式
 

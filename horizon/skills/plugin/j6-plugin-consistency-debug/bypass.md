@@ -1,12 +1,12 @@
 # Bypass 模式执行指南
 
-> 本文件是 `j6-plugin-consistency-debug` 的补充。当工作区处于 bypass 模式（自动确认 / 最少交互）时，与 SKILL.md 配合使用。
+> 本文件是 `__SKILL_j6-plugin-__consistency-debug` 的补充。当工作区处于 bypass 模式（自动确认 / 最少交互）时，与 SKILL.md 配合使用。
 
 ## 可自动确认 / 自动执行的步骤
 
 | 步骤 | 自动执行方式 | 信息来源 |
 | --- | --- | --- |
-| 获取平台 / march | 从 `.horizon/.env.board` 的 `BOARD_TYPE` 推断（`nash-e/m` → J6E/M，`nash-p` → J6P） | 环境变量 / `.env.board` |
+| 获取平台 / march | 从 `.horizon/.env.board` 的 `BOARD_TYPE` 推断（`nash-e/m` → RDK S100/S100P，`nash-p` → RDK S600） | 环境变量 / `.env.board` |
 | 获取 plugin / hbdk 版本 | 运行 `pip show horizon-plugin-pytorch hbdk4-compiler horizon-plugin-profiler` 自动采集 | 包管理器 |
 | 选择排查阶段 | 根据用户提供的产物可用性自动判断（有 `qat.bc` 无 `quantized.bc` → 先看 export；有 `quantized.bc` → 先看 convert） | 文件系统探测 |
 | 运行 QuantAnalysis | 如果 `badcase`、`dataloader`、基线和分析模型都已就绪，直接运行 `auto_find_bad_case → run → compare_per_layer → sensitivity`，不逐步确认 | 已有产物 |

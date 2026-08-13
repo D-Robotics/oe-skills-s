@@ -1,6 +1,6 @@
 # Horizon Graph Diff - 使用示例
 
-本文档说明何时触发 `j6-plugin-graph-diff`，以及如何基于计算图对比结果给出可落地的排查结论。
+本文档说明何时触发 `__SKILL_j6-plugin-__graph-diff`，以及如何基于计算图对比结果给出可落地的排查结论。
 
 ## 触发方式
 
@@ -243,16 +243,16 @@
 
 ## 与其他 Skill 的配合
 
-### 与 `j6-plugin-model-check-result` 配合
+### 与 `__SKILL_j6-plugin-__model-check-result` 配合
 
 ```text
 用户：评测和导出结果不一致，帮我排查问题。
 
 Agent：
-1. 先用 j6-plugin-model-check-result 分析 model_check_result.txt
+1. 先用 __SKILL_j6-plugin-__model-check-result 分析 model_check_result.txt
    → 发现 head1 输出差异
 
-2. 再用 j6-plugin-graph-diff 对比评测和导出计算图
+2. 再用 __SKILL_j6-plugin-__graph-diff 对比评测和导出计算图
    → 定位到具体的算子差异节点
 
 3. 映射到源码，给出修复建议

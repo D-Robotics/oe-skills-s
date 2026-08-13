@@ -1,6 +1,6 @@
 # Horizon 设置 march Skill - 使用示例
 
-本示例文档说明什么时候应触发 `j6-plugin-set-march`。
+本示例文档说明什么时候应触发 `__SKILL_j6-plugin-__set-march`。
 
 ## 触发方式
 

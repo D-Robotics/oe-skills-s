@@ -71,22 +71,22 @@ description: 板卡硬件平台检测 Skill。当任务涉及板端运行、板�
    ```bash
    # 板卡硬件平台信息（自动生成）
 
-   # === 板卡 1: J6E/M ===
+   # === 板卡 1: RDK S100/S100P ===
    BOARD_IP=<板卡 IP>
    BOARD_USR=root
    BOARD_TYPE=nash-e/m
    BPU_ARCH=<nash-e 或 nash-m>
-   PLATFORM=J6E/M
+   PLATFORM=RDK S100/S100P
    KERNEL_VERSION=<内核版本>
    IMAGE_DATE=<镜像日期>
    BPU_CORES=<BPU 核数>
    BOARD_WORKDIR=<挂载点>/oe-skill-test
 
-   # === 板卡 2: J6P ===
+   # === 板卡 2: RDK S600 ===
    BOARD_IP_NASH_P=<板卡 IP>
    BOARD_TYPE_NASH_P=nash-p
    BPU_ARCH_NASH_P=nash-p
-   PLATFORM_NASH_P=J6P
+   PLATFORM_NASH_P=RDK S600
    KERNEL_VERSION_NASH_P=<内核版本>
    IMAGE_DATE_NASH_P=<镜像日期>
    BPU_CORES_NASH_P=<BPU 核数>
@@ -110,7 +110,7 @@ description: 板卡硬件平台检测 Skill。当任务涉及板端运行、板�
 
 ## 注意事项
 
-- **硬件平台是量化配置的关键依据**：`nash-p` / J6P 使用 `fp16+int8`，`nash-e/m` / J6E/J6M 与 `nash-b` / J6B 使用 `int8`，平台信息错误会导致量化失败
+- **硬件平台是量化配置的关键依据**：`nash-p` / RDK S600 使用 `fp16+int8`，`nash-e/m` / RDK S100/S100P 与 `nash-b` / J6B 使用 `int8`，平台信息错误会导致量化失败
 - **nash-b 是 QNX 实时操作系统**：与 nash-e/m 和 nash-p 的 Linux 系统不同，nash-b 运行 QNX，部分命令行为可能有差异。SSH 检测时如果 `uname -a` 返回的系统名为 `QNX`，即可确认为 nash-b 板卡
 - **nash-b 的 BPU 核数为 1**：`core_num` 只能设为 1，且不支持 `max_l2m_size` 参数
 - 如果用户更换了板卡，需要删除 `.horizon/.env.board` 重新检测

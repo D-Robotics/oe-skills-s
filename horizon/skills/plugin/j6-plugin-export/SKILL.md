@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-export
+name: __SKILL_j6-plugin-__export
 description: 使用 horizon_plugin_pytorch 的 hbdk4.export 将 QAT 模型导出为 HBIR IR 模块。以独立导出脚本的形式执行，不在训练或评测脚本中添加导出逻辑。
 ---
 
@@ -247,10 +247,10 @@ Converting a tensor to a Python {} might cause the trace to be incorrect. We can
 
 以下情况不属于本 Skill 的直接处理范围：
 
-- 给模型做 `prepare(...)` → 用 `j6-plugin-prepare`
-- 设置 fake quantize 状态 → 用 `j6-plugin-set-fake-quantize`
-- 设置 march → 用 `j6-plugin-set-march`
-- 插入 QuantStub/DeQuantStub → 用 `j6-plugin-insert-quant-dequant`
+- 给模型做 `prepare(...)` → 用 `__SKILL_j6-plugin-__prepare`
+- 设置 fake quantize 状态 → 用 `__SKILL_j6-plugin-__set-fake-quantize`
+- 设置 march → 用 `__SKILL_j6-plugin-__set-march`
+- 插入 QuantStub/DeQuantStub → 用 `__SKILL_j6-plugin-__insert-quant-dequant`
 - 导出浮点模型（非 QAT 模型）
 - 编译 HBIR 模型（导出后的下一步）
 - 在训练/评测脚本中添加导出逻辑 → 应创建独立脚本

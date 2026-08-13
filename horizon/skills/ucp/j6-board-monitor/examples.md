@@ -1,11 +1,11 @@
 # Board Monitor — 示例
 
-## 示例 1: 10Hz 推理监控 (Scenario A, J6P)
+## 示例 1: 10Hz 推理监控 (Scenario A, RDK S600)
 
 **用户输入**：
-> 帮我监控模型 yolov5s.hbm 按 10Hz 推理时的 BPU 占用率、DDR 带宽和内存使用情况，开发板 J6P，IP 10.64.61.26，监控 30 秒
+> 帮我监控模型 yolov5s.hbm 按 10Hz 推理时的 BPU 占用率、DDR 带宽和内存使用情况，开发板 RDK S600，IP 10.64.61.26，监控 30 秒
 
-**场景识别**：Scenario A（受控推理 + 同步监控），J6P 平台
+**场景识别**：Scenario A（受控推理 + 同步监控），RDK S600 平台
 
 **执行步骤**：
 1. 上传模型到板端 `/backhaul/oe-skill-test/`
@@ -59,19 +59,19 @@
 ## 资源消耗评估
 模型 yolov5s 在 10Hz 推理下：
 - BPU 平均占用 84.7%，峰值 92.3%，余量约 15%。可考虑提升帧率或并行其他模型。
-- DDR 平均带宽 10.79 GB/s，J6P DDR 上限约 17 GB/s，利用率约 63%，带宽充裕。
+- DDR 平均带宽 10.79 GB/s，RDK S600 DDR 上限约 17 GB/s，利用率约 63%，带宽充裕。
 - 内存增量约 256 MB（主要为 ION uncache），16GB 系统内存充足。
 - 结论：模型在 10Hz 帧率下资源消耗可接受，BPU 有少量余量，DDR 和内存均充裕。
 ```
 
 ---
 
-## 示例 2: 独立资源监控 (Scenario B, J6E)
+## 示例 2: 独立资源监控 (Scenario B, RDK S100)
 
 **用户输入**：
-> 帮我看看板端当前 BPU 占用和 DDR 带宽，J6E 板子，IP 10.103.43.9，采集 20 秒
+> 帮我看看板端当前 BPU 占用和 DDR 带宽，RDK S100 板子，IP 10.103.43.9，采集 20 秒
 
-**场景识别**：Scenario B（独立监控，无推理负载），J6E 平台
+**场景识别**：Scenario B（独立监控，无推理负载），RDK S100 平台
 
 **执行步骤**：
 1. 确认板端连通，工具可用
@@ -124,15 +124,15 @@ N/A — 无推理负载
 
 ---
 
-## 示例 3: 多核 DDR 监控 (Scenario A, J6P per-core)
+## 示例 3: 多核 DDR 监控 (Scenario A, RDK S600 per-core)
 
 **用户输入**：
-> 在 J6P 上按 20Hz 跑 resnet50.hbm，看看各核的 DDR 带宽，监控 15 秒
+> 在 RDK S600 上按 20Hz 跑 resnet50.hbm，看看各核的 DDR 带宽，监控 15 秒
 
-**场景识别**：Scenario A（受控推理 + 同步监控），J6P 平台，关注 per-core DDR
+**场景识别**：Scenario A（受控推理 + 同步监控），RDK S600 平台，关注 per-core DDR
 
 **关键差异**：
-- hrut_ddr 使用 `-t bpu_p0` 参数（J6P per-core 模式）
+- hrut_ddr 使用 `-t bpu_p0` 参数（RDK S600 per-core 模式）
 - 两轮执行：第一轮 hrt_ucp_monitor + 推理（BPU + 内存），第二轮 hrut_ddr + 推理（DDR 带宽）
 
 **输出报告**：
@@ -178,7 +178,7 @@ N/A — 无推理负载
 ## 资源消耗评估
 模型 resnet50 在 20Hz 推理下：
 - BPU 平均占用 71.5%，四核负载均衡（69.7%-73.1%），余量约 28%。
-- DDR 平均带宽 4.93 GB/s，J6P DDR 上限约 17 GB/s，利用率仅 29%。
+- DDR 平均带宽 4.93 GB/s，RDK S600 DDR 上限约 17 GB/s，利用率仅 29%。
 - ION 内存增量约 384 MB，系统内存充裕。
 - 结论：resnet50 在 20Hz 下资源消耗较低，BPU 和 DDR 均有大量余量，
   可考虑提升帧率或并行部署其他模型。

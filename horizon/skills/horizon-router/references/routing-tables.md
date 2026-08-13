@@ -33,11 +33,11 @@
 
 | 意图 | Skill | 说明 |
 |------|-------|------|
-| 浮点模型 → QAT 适配（set_march、QDQ、prepare、fake quant） | `j6-plugin-adaptation` | |
-| 导出 HBIR / BC | `j6-plugin-export` | |
-| 量化 → 导出 → 编译全流程代码生成 | `j6-plugin-hbdk-generating` | 编排型 Skill |
+| 浮点模型 → QAT 适配（set_march、QDQ、prepare、fake quant） | `__SKILL_j6-plugin-__adaptation` | |
+| 导出 HBIR / BC | `__SKILL_j6-plugin-__export` | |
+| 量化 → 导出 → 编译全流程代码生成 | `__SKILL_j6-plugin-__hbdk-generating` | 编排型 Skill |
 
-> **量化配置默认**：QAT 导出和全流程代码生成中，量化配置默认使用全 int8。如果用户未指定混合精度，不要主动升高算子精度。全 int8 精度不达标时，先路由到 `j6-plugin-precision-tuning` 做诊断，再根据敏感度结果决定混合精度策略。
+> **量化配置默认**：QAT 导出和全流程代码生成中，量化配置默认使用全 int8。如果用户未指定混合精度，不要主动升高算子精度。全 int8 精度不达标时，先路由到 `__SKILL_j6-plugin-__precision-tuning` 做诊断，再根据敏感度结果决定混合精度策略。
 
 ### 4. 精度调优
 
@@ -47,17 +47,17 @@
 
 | 问题类型 | 典型现象 | 路由 |
 |---------|---------|------|
-| 训练侧精度问题 | calibration 掉点、QAT loss 不收敛、混合精度调优 | `j6-plugin-precision-tuning` |
-| 部署侧一致性问题 | 训练侧精度正常，export/convert/compile/HBM 掉点 | `j6-plugin-consistency-debug` |
+| 训练侧精度问题 | calibration 掉点、QAT loss 不收敛、混合精度调优 | `__SKILL_j6-plugin-__precision-tuning` |
+| 部署侧一致性问题 | 训练侧精度正常，export/convert/compile/HBM 掉点 | `__SKILL_j6-plugin-__consistency-debug` |
 
 | 意图 | Skill | 说明 |
 |------|-------|------|
 | PTQ cosine similarity 不达标 | `hmct-workflow` | 路由 C：节点敏感度 → 混精度回退 → 渐进阈值调优 |
 | PTQ 单项 debug（灵敏度 / 数据分布 / 累积误差） | `hmct-workflow` | 路由 D：`hmct-debugger` CLI |
-| floatvscalib debug 结果解读（量化误差分析、截断/舍入误差分类、优化建议） | `j6-plugin-precision-tuning` | 分析 floatvscalib/ 目录中的逐层对比数据，分类误差类型并提供修复方案 |
-| Calibration 精度不达标 / QAT 精度崩溃 / 混合精度调优 | `j6-plugin-precision-tuning` | PyTorch 侧 calibration/QAT 精度调优，含 int8/int16/fp16 混合精度 |
-| QAT 训练 loss 不收敛 | `j6-plugin-precision-tuning` | 排查训练 pipeline、fake quant 使用方式、float finetune |
-| 训练正常但 export/convert/compile/HBM 掉点 | `j6-plugin-consistency-debug` | 按 qat.pt → qat.export.pt → qat.bc → quantized.bc → hbm 分段定位 |
+| floatvscalib debug 结果解读（量化误差分析、截断/舍入误差分类、优化建议） | `__SKILL_j6-plugin-__precision-tuning` | 分析 floatvscalib/ 目录中的逐层对比数据，分类误差类型并提供修复方案 |
+| Calibration 精度不达标 / QAT 精度崩溃 / 混合精度调优 | `__SKILL_j6-plugin-__precision-tuning` | PyTorch 侧 calibration/QAT 精度调优，含 int8/int16/fp16 混合精度 |
+| QAT 训练 loss 不收敛 | `__SKILL_j6-plugin-__precision-tuning` | 排查训练 pipeline、fake quant 使用方式、float finetune |
+| 训练正常但 export/convert/compile/HBM 掉点 | `__SKILL_j6-plugin-__consistency-debug` | 按 qat.pt → qat.export.pt → qat.bc → quantized.bc → hbm 分段定位 |
 | 板端推理精度（量化后 vs 板端输出） | `j6-ucp-hbm-infer` | HBM 精度评测 |
 
 **精度调优前置检查（必须执行）**：
@@ -97,9 +97,9 @@
 | 意图 | Skill | 说明 |
 |------|-------|------|
 | 量化前后一致性验证（cosine / MSE） | `horizon-tc-ui` | `hb_verifier` |
-| 训练侧精度正常但编译/板端掉点 | `j6-plugin-consistency-debug` | 分段定位 export/convert/compile 一致性问题 |
+| 训练侧精度正常但编译/板端掉点 | `__SKILL_j6-plugin-__consistency-debug` | 分段定位 export/convert/compile 一致性问题 |
 | 板端推理精度验证 | `j6-ucp-hbm-infer` | HBM 在目标设备上评测 |
-| QAT model_check_result.txt 分析 | `j6-plugin-model-check-result` | |
+| QAT model_check_result.txt 分析 | `__SKILL_j6-plugin-__model-check-result` | |
 
 ### 8. UCP 部署
 
@@ -127,7 +127,7 @@
 | 意图 | Skill | 说明 |
 |------|-------|------|
 | BPU 占用率监控 | `j6-board-monitor` | Scenario B: 独立监控 |
-| DDR 带宽监控 | `j6-board-monitor` | 注意 J6P 需 `-t bpu_p0` |
+| DDR 带宽监控 | `j6-board-monitor` | 注意 RDK S600 需 `-t bpu_p0` |
 | 内存使用监控 | `j6-board-monitor` | ION + 系统内存 |
 | 设定帧率推理 + 监控 | `j6-board-monitor` | Scenario A: 受控推理 + 同步监控 |
 | 部署前板端硬件兼容性检查 | `j6-board-monitor` | 检查 ION 内存、L2M 配置、模型-板端兼容性，见 `board-preflight.md` |
@@ -189,7 +189,7 @@ LightCompress 是 LLM 量化实验工具，支持 RTN/GPTQ/SmoothQuant/AWQ 等�
 |------|-------|------|
 | 查看模型信息（命令行输出，**默认**） | `horizon-tc-ui` | `hb_model_info` |
 | 交互式可视化（需浏览器） | `horizon-tc-ui` | `hb_model_info -v`，**无 GUI 环境不要用** |
-| 对比两个计算图差异 | `j6-plugin-graph-diff` | FX Graph diff 报告 |
+| 对比两个计算图差异 | `__SKILL_j6-plugin-__graph-diff` | FX Graph diff 报告 |
 | 查看编译中间阶段结构 | `j6-hbdk-compile` | 副产物 `*_converted.onnx`、`*_removed.onnx` |
 
 ### 场景 2：精度调优
@@ -199,14 +199,14 @@ LightCompress 是 LLM 量化实验工具，支持 RTN/GPTQ/SmoothQuant/AWQ 等�
 ```
 精度不达标
 ├── 用户提供了 floatvscalib/ 目录要求解读？
-│   └── 是 → j6-plugin-precision-tuning（floatvscalib debug 结果解读，含截断/舍入误差分类）
+│   └── 是 → __SKILL_j6-plugin-__precision-tuning（floatvscalib debug 结果解读，含截断/舍入误差分类）
 ├── calibration / QAT 阶段精度就不达标？
-│   ├── 是 → j6-plugin-precision-tuning（PyTorch 侧精度调优）
+│   ├── 是 → __SKILL_j6-plugin-__precision-tuning（PyTorch 侧精度调优）
 │   └── 否（训练侧精度正常）
-│       ├── export/pre_export 掉点？ → j6-plugin-consistency-debug（阶段 1）
-│       ├── convert 掉点？          → j6-plugin-consistency-debug（阶段 2）
-│       ├── compile/HBM 掉点？      → j6-plugin-consistency-debug（阶段 3）
-│       └── 不确定从哪开始？        → j6-plugin-consistency-debug（先做基线确认）
+│       ├── export/pre_export 掉点？ → __SKILL_j6-plugin-__consistency-debug（阶段 1）
+│       ├── convert 掉点？          → __SKILL_j6-plugin-__consistency-debug（阶段 2）
+│       ├── compile/HBM 掉点？      → __SKILL_j6-plugin-__consistency-debug（阶段 3）
+│       └── 不确定从哪开始？        → __SKILL_j6-plugin-__consistency-debug（先做基线确认）
 ```
 
 **PTQ 链路精度问题**仍路由到 `hmct-workflow`。

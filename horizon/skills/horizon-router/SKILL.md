@@ -33,7 +33,7 @@ OpenExplorer / Horizon 工具链的顶层路由入口。
 除非用户明确要求混合精度调优，或当前任务已通过评测确认全 int8 精度不达标，否则涉及量化配置的任务（QAT 适配、导出、全流程代码生成）应默认使用全 int8 配置。
 
 - **禁止**在没有精度不达标证据的情况下，主动将算子升高到 int16 或 fp16
-- 如果全 int8 精度不达标，应先路由到 `j6-plugin-precision-tuning`，按敏感度分析结果决定哪些算子需要升高精度，而不是凭经验预设混合精度
+- 如果全 int8 精度不达标，应先路由到 `__SKILL_j6-plugin-__precision-tuning`，按敏感度分析结果决定哪些算子需要升高精度，而不是凭经验预设混合精度
 - 用户明确说"用混合精度"或"int8 不够"时，才跳过全 int8 默认
 
 ### 长时间任务的等待策略
@@ -219,7 +219,7 @@ SKILL.md 中可能包含特定场景的执行框架、参考文档加载指令�
 ### 路由原则
 
 - 用户请求通常落在流程中的某个阶段，先定位到阶段再路由到对应 Skill
-- 跨多个连续阶段的需求，优先用编排型 Skill（`j6-plugin-hbdk-generating`、`j6-plugin-adaptation`），不要拆成多个零散 Skill
+- 跨多个连续阶段的需求，优先用编排型 Skill（`__SKILL_j6-plugin-__hbdk-generating`、`__SKILL_j6-plugin-__adaptation`），不要拆成多个零散 Skill
 - 能明确命中具体 Skill 时，尽快切换，不要停留在本 Skill 中重复解释
 
 ### ⚠️ 易混淆路由对照表
@@ -228,12 +228,12 @@ SKILL.md 中可能包含特定场景的执行框架、参考文档加载指令�
 
 | 用户请求特征 | 正确路由 | 错误路由 | 区分要点 |
 |-------------|---------|---------|---------|
-| 解读 `floatvscalib/` 目录的 debug 结果（量化误差分析、截断/舍入误差分类、fix-scale 建议） | **`j6-plugin-precision-tuning`** | ~~`j6-plugin-consistency-debug`~~ | floatvscalib 是 calibration/QAT 训练侧产出，属于精度调优范畴 |
-| 解读 `compare_per_layer_out.csv`、`sensitive_ops.txt`、`abnormal_layer_advisor.csv` | **`j6-plugin-precision-tuning`** | ~~`j6-plugin-consistency-debug`~~ | 这些文件来自 QuantAnalysis 的精度分析，用于量化误差分类 |
-| 训练侧精度正常，但 export/convert/compile/HBM 板端出现精度下降 | **`j6-plugin-consistency-debug`** | ~~`j6-plugin-precision-tuning`~~ | 关键是训练侧精度正常 + 部署阶段才掉点 |
-| calibration 后精度不达标、QAT 训练 loss 不收敛 | **`j6-plugin-precision-tuning`** | ~~`j6-plugin-consistency-debug`~~ | 问题在训练/校准阶段，非部署一致性 |
+| 解读 `floatvscalib/` 目录的 debug 结果（量化误差分析、截断/舍入误差分类、fix-scale 建议） | **`__SKILL_j6-plugin-__precision-tuning`** | ~~`__SKILL_j6-plugin-__consistency-debug`~~ | floatvscalib 是 calibration/QAT 训练侧产出，属于精度调优范畴 |
+| 解读 `compare_per_layer_out.csv`、`sensitive_ops.txt`、`abnormal_layer_advisor.csv` | **`__SKILL_j6-plugin-__precision-tuning`** | ~~`__SKILL_j6-plugin-__consistency-debug`~~ | 这些文件来自 QuantAnalysis 的精度分析，用于量化误差分类 |
+| 训练侧精度正常，但 export/convert/compile/HBM 板端出现精度下降 | **`__SKILL_j6-plugin-__consistency-debug`** | ~~`__SKILL_j6-plugin-__precision-tuning`~~ | 关键是训练侧精度正常 + 部署阶段才掉点 |
+| calibration 后精度不达标、QAT 训练 loss 不收敛 | **`__SKILL_j6-plugin-__precision-tuning`** | ~~`__SKILL_j6-plugin-__consistency-debug`~~ | 问题在训练/校准阶段，非部署一致性 |
 
-> **快速判定规则**：如果用户提到了 `floatvscalib`、`debug 结果解读`、`截断误差`、`舍入误差`、`fixscale`、`compare_per_layer_out`，**一律路由到 `j6-plugin-precision-tuning`**。只有当用户明确说"训练侧正常但部署侧掉点"时，才路由到 `j6-plugin-consistency-debug`。
+> **快速判定规则**：如果用户提到了 `floatvscalib`、`debug 结果解读`、`截断误差`、`舍入误差`、`fixscale`、`compare_per_layer_out`，**一律路由到 `__SKILL_j6-plugin-__precision-tuning`**。只有当用户明确说"训练侧正常但部署侧掉点"时，才路由到 `__SKILL_j6-plugin-__consistency-debug`。
 
 ### 量化路径判定门禁（必须执行）
 

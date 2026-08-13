@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-prepare
+name: __SKILL_j6-plugin-__prepare
 description: 在适配 horizon_plugin_pytorch 的过程中对浮点模型执行 prepare（仅添加 prepare 调用；qconfig_setter 固定为全部双 int8 模板；不包含 dynamic_block 相关修改）。
 ---
 

@@ -1,6 +1,6 @@
 # 基础结构量化编译全流程代码模板
 
-以下是 `j6-plugin-quantization` 和 `j6-hbdk-export-compile` 两个子 skill 合并后的完整端到端代码模板。
+以下是 `__SKILL_j6-plugin-__quantization` 和 `j6-hbdk-export-compile` 两个子 skill 合并后的完整端到端代码模板。
 
 ```python
 """
@@ -48,7 +48,7 @@ class MyNet(nn.Module):
 
 
 def run_quantization_pipeline(march="nash-p"):  # 默认 nash-p，用户未指定时使用
-    # ===== j6-plugin-quantization: 量化流程 =====
+    # ===== __SKILL_j6-plugin-__quantization: 量化流程 =====
 
     # 1. 设置平台
     set_march(march)

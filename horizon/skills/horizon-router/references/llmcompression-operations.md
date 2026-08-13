@@ -50,7 +50,7 @@ bash scripts/<name>.sh --config_path <yaml>
 
 ```yaml
 model:
-  march: nash-p                    # BPU 架构：nash-p (J6P) 或 nash-e (J6E/J6M)
+  march: nash-p                    # BPU 架构：nash-p (RDK S600) 或 nash-e (RDK S100/RDK S100P)
   model_name: Qwen3_VL            # 必须匹配 MODEL_REGISTRY 注册名
   model_path: /path/to/checkpoint # HuggingFace 模型目录
   model_list: [visual, prefill, decode]  # 模型部件列表

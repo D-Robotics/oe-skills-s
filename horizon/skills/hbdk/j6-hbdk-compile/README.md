@@ -6,7 +6,7 @@
 
 ## 1. 核心功能
 
-j6-hbdk-compile 是一个面向 Horizon J6 平台的**通用模型编译 Skill**，将 PTQ 量化后的模型（`.onnx` 或 `.bc`）编译为可部署的 `.hbm` 产物。
+j6-hbdk-compile 是一个面向 Horizon RDK S 系列平台的**通用模型编译 Skill**，将 PTQ 量化后的模型（`.onnx` 或 `.bc`）编译为可部署的 `.hbm` 产物。
 
 核心能力：
 

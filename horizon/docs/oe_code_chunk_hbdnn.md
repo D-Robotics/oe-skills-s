@@ -5,7 +5,7 @@
 - **名称**: hbdnn (Horizon BPU DNN 算子库) v1.0.3
 - **Python 包**: `hbdnn-1.0.3-py3`，预编译 wheel 分发包（非 git 仓库，无可构建源码）
 - **用途**: HBDK4 编译器栈中 DNN 算子的 CUDA 参考实现库，供 x86-64 主机侧模拟和验证量化算子行为
-- **角色**: J6 Open Explorer (OE) v3.9.0-rc4 工具链的底层依赖，位于 `package/host/ai_toolchain/code/` 下
+- **角色**: RDK S 系列 Open Explorer (OE) v3.9.0-rc4 工具链的底层依赖，位于 `package/host/ai_toolchain/code/` 下
 - **核心产物**: `hbdnn/libhbdnn.so`（ELF x86-64，~9.5 MB，含 debug_info）
 - **Python API**: 无（`__init__.py` 为空）；所有功能通过 C++ 共享库导出，由 HMCT/编译器在 C++ 层调用
 - **运行时依赖**: libcudnn.so.9（卷积/池化）、libcublas.so.12（INT8 GEMM）、libgomp.so.1（OpenMP 并行）
@@ -40,7 +40,7 @@ hbdnn-1.0.3-py3/
 |---|---|
 | `hbdnn::` | 核心算子实现层：`*OpCpu` / `*OpGpu` / `*Forward` 三种入口；`OpContext`（运行上下文）、`*Descriptor`（算子参数描述符）、`DLTensor`（张量载体） |
 | `hbdnn::cuda::` | 底层 CUDA kernel 层（`__device_stub__` 入口）：`ForwardBias`、`CalcMinShift`、`ElementwiseAdd`、`QuantiBatchnormKernel`、`VecShiftInput`、`TransposeWeight` 等 |
-| `hbtl::b30::` / `hbtl_gpu::b30::` | UDE 框架算子注册入口，面向 B30 芯片（J6），分发到 `hbdnn::` 实现 |
+| `hbtl::b30::` / `hbtl_gpu::b30::` | UDE 框架算子注册入口，面向 B30 芯片（RDK S 系列），分发到 `hbdnn::` 实现 |
 | `hbtl_gpu::hbir::` | UDE 框架数据变换入口（Reshape、Transpose） |
 
 ### HBTL UDE 入口函数（C++ 签名）
@@ -99,7 +99,7 @@ hbdnn-1.0.3-py3/
 | CUDA 设备管理 | `DeviceGuard`, `GetCudaNumBlocks` | GPU 设备切换、线程块计算 |
 | 布局格式 | `LayoutFlag`, `NHWC`, `NCHW` | 张量内存布局枚举 |
 | 量化类型 | `QuantiType` | 量化方式枚举 |
-| B30 芯片算子 | `hbtl::b30::`, `hbtl_gpu::b30::` | 面向 J6/B30 的 UDE 算子注册 |
+| B30 芯片算子 | `hbtl::b30::`, `hbtl_gpu::b30::` | 面向 RDK S 系列/B30 的 UDE 算子注册 |
 | HBTL 框架集成 | `hbtl`, `hbtl_gpu`, `UDE_ABI_CHECK` | HBTL 模板库分发层 |
 | mshadow 张量库 | `mshadow::Shape`, `mshadow::Tensor`, `mshadow::cpu/gpu` | 底层张量运算库 |
 | ReLU 激活 | `VecReluGpu`, `ReluActivication` | 向量 ReLU 激活 |
@@ -127,5 +127,5 @@ hbdnn-1.0.3-py3/
 - **相关示例代码**：位于 OE 包的 `samples/ucp_tutorial/dnn/` 目录（`basic_samples/` 推理入门、`ai_benchmark/` 性能测试），通过 CMake + `build_x86.sh` / `build_aarch64.sh` 构建
 - **调试提示**：`libhbdnn.so` 含 debug_info（未 strip），可用 `nm -D --defined-only | c++filt` 查看完整导出符号
 - **符号可见性**：仅 UDE 入口函数和核心算子标记为 `T`（全局可见），大量辅助函数为 `W`（弱符号，模板实例化产生）
-- **板端 vs 主机端**：hbdnn 不运行在 J6 板端（板端走 `hbdk4_runtime` + BPU 路径），仅用于主机侧编译/量化/校验流程
+- **板端 vs 主机端**：hbdnn 不运行在 RDK S 系列板端（板端走 `hbdk4_runtime` + BPU 路径），仅用于主机侧编译/量化/校验流程
 - **常见误区**：不要试图直接 `import hbdnn` 来使用算子功能；hbdnn 被 HMCT 编译器工具链在 C++ 层隐式调用，Python 用户无需直接交互

@@ -7,7 +7,7 @@ description: >
   触发关键词：HMCT 精度调优、PTQ 调优、量化精度、cosine similarity 不达标、混合精度。
 ---
 
-# J6 HMCT Cosine Similarity 调优（工作流）
+# RDK S 系列 HMCT Cosine Similarity 调优（工作流）
 
 ## 适用前提（必须一致）
 

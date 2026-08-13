@@ -66,7 +66,7 @@ DDR 带宽采集工具，按指定周期采样 DDR 读写带宽并输出 CSV。
 |------|--------|------|--------|------|------|
 | --type | -t | string | (必填) | bpu, bpu_p0, bpu_p1, cpu, mcu | 监控目标类型 |
 | --period | -p | int | 1000 | [1000, 2000000] | 采样周期 (μs)，推荐 1000000 (1秒) |
-| --device | -d | string/int | 0 | J6E:[0-5], J6P:[0-15] | DDR 设备号，多设备用空格分隔 |
+| --device | -d | string/int | 0 | RDK S100:[0-5], RDK S600:[0-15] | DDR 设备号，多设备用空格分隔 |
 | --csv | -c | flag | - | - | CSV 格式输出 |
 | --filename | -f | string | stdout | - | CSV 输出文件路径 |
 | --number | -n | int | 0(无限) | >0 | 采样次数，**必须指定** |
@@ -84,13 +84,13 @@ timestamp,read_MiB/s,write_MiB/s
 ### 使用示例
 
 ```bash
-# J6E: 监控 BPU DDR 带宽，每秒采样，共 30 次
+# RDK S100: 监控 BPU DDR 带宽，每秒采样，共 30 次
 hrut_ddr -t bpu -p 1000000 -n 30 -c -f ddr_bandwidth.csv
 
-# J6P: 监控 BPU core 0 的 DDR 带宽
+# RDK S600: 监控 BPU core 0 的 DDR 带宽
 hrut_ddr -t bpu_p0 -p 1000000 -n 30 -c -f ddr_bandwidth.csv
 
-# J6P: 监控多设备 DDR 带宽
+# RDK S600: 监控多设备 DDR 带宽
 hrut_ddr -d "0 1 2 3" -t bpu_p0 -p 1000000 -n 30 -c -f ddr_bandwidth.csv
 ```
 
@@ -98,7 +98,7 @@ hrut_ddr -d "0 1 2 3" -t bpu_p0 -p 1000000 -n 30 -c -f ddr_bandwidth.csv
 
 ## 平台差异对照表
 
-| 特性 | J6E (nash-e/nash-m) | J6P (nash-p) |
+| 特性 | RDK S100 (nash-e/nash-m) | RDK S600 (nash-p) |
 |------|---------------------|-------------|
 | hrut_ddr `-t` 参数 | `bpu` | `bpu_p0` (core 0), `bpu_p1` (core 1) |
 | BPU 核心数 | 1 (2 logical) | 4 |
@@ -114,12 +114,12 @@ hrut_ddr -d "0 1 2 3" -t bpu_p0 -p 1000000 -n 30 -c -f ddr_bandwidth.csv
 BOARD_TYPE=$(grep '^BOARD_TYPE=' .horizon/.env.board | head -1 | cut -d= -f2)
 
 if echo "$BOARD_TYPE" | grep -q "nash-p"; then
-  # J6P
+  # RDK S600
   DDR_TYPE="bpu_p0"
   BPU_CORES=4
   DDR_DEVICES="0 1 2 3"
 else
-  # J6E
+  # RDK S100
   DDR_TYPE="bpu"
   BPU_CORES=1
   DDR_DEVICES="0"
@@ -233,14 +233,14 @@ ssh root@<IP> "
 # 等待第一轮完成后执行第二轮
 
 # ═══ 第二轮：DDR 带宽监控 + 推理 ═══
-# DDR 带宽监控 (J6E)
+# DDR 带宽监控 (RDK S100)
 ssh root@<IP> "
   hrut_ddr -t bpu -p 1000000 -n $MONITOR_DURATION -c -f <BOARD_WORKDIR>/ddr_bandwidth.csv 2>&1 &
   sleep 2
   cd <BOARD_WORKDIR> && nohup sh run_at_fps.sh <model> <fps> $TOTAL_FRAMES <core_id> > inference_pass2.log 2>&1 &
 "
 
-# DDR 带宽监控 (J6P)
+# DDR 带宽监控 (RDK S600)
 ssh root@<IP> "
   hrut_ddr -t bpu_p0 -p 1000000 -n $MONITOR_DURATION -c -f <BOARD_WORKDIR>/ddr_bandwidth.csv 2>&1 &
   sleep 2
@@ -343,7 +343,7 @@ peak_bpu = max(bpu_busy) if bpu_busy else 0
 
 | 问题 | 症状 | 原因 | 解决 |
 |------|------|------|------|
-| hrut_ddr 打开失败 | `Error: Open failed!` | J6P 上使用了 `-t bpu` | 改用 `-t bpu_p0` |
+| hrut_ddr 打开失败 | `Error: Open failed!` | RDK S600 上使用了 `-t bpu` | 改用 `-t bpu_p0` |
 | hrut_ddr 打开失败（参数正确） | `Error: Open failed!`，`-t` 参数已正确 | 与 `hrt_ucp_monitor` 同时运行，争夺设备文件互斥锁 | 分两轮执行（见「工具互斥说明」） |
 | gRPC 推理太慢 | ~6.8s/帧 | 通信开销 | 改用板端 `hrt_model_exec` |
 | 监控数据全零 | BPU 0%, DDR ~0 | 没有推理负载在运行 | 确认推理进程正在运行：`ps aux \| grep hrt_model_exec` |

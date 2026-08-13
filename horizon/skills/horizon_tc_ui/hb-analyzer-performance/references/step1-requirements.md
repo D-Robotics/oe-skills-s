@@ -20,9 +20,9 @@ ls *.onnx *.bc *.hbm 2>/dev/null
 
 常见架构：
 - `nash-b` - J6B 平台
-- `nash-e` - J6E 平台
-- `nash-m` - J6M 平台
-- `nash-p` - J6P 平台
+- `nash-e` - RDK S100 平台
+- `nash-m` - RDK S100P 平台
+- `nash-p` - RDK S600 平台
 - `nash-h` - J6H 平台
 - 其他：参考项目文档
 

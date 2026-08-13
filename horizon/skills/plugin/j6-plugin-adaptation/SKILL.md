@@ -1,6 +1,6 @@
 ---
-name: j6-plugin-adaptation
-description: 为用户的浮点 PyTorch 模型适配地平线机器人公司的 QAT 工具 `horizon_plugin_pytorch`。这是一个编排型 skill，必须按固定顺序依次调用：`j6-plugin-set-march` → `j6-plugin-insert-quant-dequant` → `j6-plugin-dynamic-block` → `j6-plugin-prepare` → `j6-plugin-set-fake-quantize`。
+name: __SKILL_j6-plugin-__adaptation
+description: 为用户的浮点 PyTorch 模型适配地平线机器人公司的 QAT 工具 `horizon_plugin_pytorch`。这是一个编排型 skill，必须按固定顺序依次调用：`__SKILL_j6-plugin-__set-march` → `__SKILL_j6-plugin-__insert-quant-dequant` → `__SKILL_j6-plugin-__dynamic-block` → `__SKILL_j6-plugin-__prepare` → `__SKILL_j6-plugin-__set-fake-quantize`。
 ---
 
 # 为浮点模型执行完整 Horizon QAT 适配（组合调度版）
@@ -15,31 +15,31 @@ description: 为用户的浮点 PyTorch 模型适配地平线机器人公司的 
 
 本 Skill 必须按以下顺序调用目录下的 skill，不得跳序：
 
-1. `j6-plugin-set-march`
-2. `j6-plugin-insert-quant-dequant`
-3. `j6-plugin-dynamic-block`
-4. `j6-plugin-prepare`
-5. `j6-plugin-set-fake-quantize`
+1. `__SKILL_j6-plugin-__set-march`
+2. `__SKILL_j6-plugin-__insert-quant-dequant`
+3. `__SKILL_j6-plugin-__dynamic-block`
+4. `__SKILL_j6-plugin-__prepare`
+5. `__SKILL_j6-plugin-__set-fake-quantize`
 
 ## 为什么必须按这个顺序
 
-### 1) `j6-plugin-set-march`
+### 1) `__SKILL_j6-plugin-__set-march`
 
 先设置 `march`，让后续模型构建、prepare、量化逻辑和平台相关分支都在正确的目标平台上下文中执行。
 
-### 2) `j6-plugin-insert-quant-dequant`
+### 2) `__SKILL_j6-plugin-__insert-quant-dequant`
 
 在部署输入/输出边界插入 `QuantStub/DeQuantStub`，明确量化图边界。后续 prepare 依赖这些边界信息感知部署范围。
 
-### 3) `j6-plugin-dynamic-block`
+### 3) `__SKILL_j6-plugin-__dynamic-block`
 
 处理动态控制流中可能触发 function 替换或算子融合的区域。必须在 prepare 前处理，否则 prepare/JIT_STRIP 阶段可能产生 scope 错乱或 forward 报错。
 
-### 4) `j6-plugin-prepare`
+### 4) `__SKILL_j6-plugin-__prepare`
 
 对浮点模型执行 `prepare(...)`，把模型变成 QAT 模型。prepare 之后不应再随意改模型结构、hook 或动态图 scope 逻辑。
 
-### 5) `j6-plugin-set-fake-quantize`
+### 5) `__SKILL_j6-plugin-__set-fake-quantize`
 
 在 calibration / qat / validation 阶段入口设置对应的 fake quantize 状态。这一步依赖模型已经具有 prepare 后的 QAT 结构。
 
@@ -51,18 +51,18 @@ description: 为用户的浮点 PyTorch 模型适配地平线机器人公司的 
 
 1. 识别目标模型文件/类/脚本入口。
 2. 依次调用下列子 skill：
-   - `j6-plugin-set-march`
-   - `j6-plugin-insert-quant-dequant`
-   - `j6-plugin-dynamic-block`
-   - `j6-plugin-prepare`
-   - `j6-plugin-set-fake-quantize`
+   - `__SKILL_j6-plugin-__set-march`
+   - `__SKILL_j6-plugin-__insert-quant-dequant`
+   - `__SKILL_j6-plugin-__dynamic-block`
+   - `__SKILL_j6-plugin-__prepare`
+   - `__SKILL_j6-plugin-__set-fake-quantize`
 4. 在每一步都遵守对应 skill 的约束，而不是把所有逻辑揉成一次性粗暴修改。
 
 ---
 
 ## 各子 skill 的职责边界
 
-### A. `j6-plugin-set-march`
+### A. `__SKILL_j6-plugin-__set-march`
 
 负责：
 
@@ -79,7 +79,7 @@ horizon.march.set_march(...)
 
 ---
 
-### B. `j6-plugin-insert-quant-dequant`
+### B. `__SKILL_j6-plugin-__insert-quant-dequant`
 
 负责：
 
@@ -94,7 +94,7 @@ horizon.march.set_march(...)
 
 ---
 
-### C. `j6-plugin-dynamic-block`
+### C. `__SKILL_j6-plugin-__dynamic-block`
 
 负责：
 
@@ -107,7 +107,7 @@ horizon.march.set_march(...)
 
 ---
 
-### D. `j6-plugin-prepare`
+### D. `__SKILL_j6-plugin-__prepare`
 
 负责：
 
@@ -120,7 +120,7 @@ horizon.march.set_march(...)
 
 ---
 
-### E. `j6-plugin-set-fake-quantize`
+### E. `__SKILL_j6-plugin-__set-fake-quantize`
 
 负责：
 
@@ -157,11 +157,11 @@ horizon.march.set_march(...)
 
 严格按顺序：
 
-1. `j6-plugin-set-march`
-2. `j6-plugin-insert-quant-dequant`
-3. `j6-plugin-dynamic-block`
-4. `j6-plugin-prepare`
-5. `j6-plugin-set-fake-quantize`
+1. `__SKILL_j6-plugin-__set-march`
+2. `__SKILL_j6-plugin-__insert-quant-dequant`
+3. `__SKILL_j6-plugin-__dynamic-block`
+4. `__SKILL_j6-plugin-__prepare`
+5. `__SKILL_j6-plugin-__set-fake-quantize`
 
 ### 第四步：完成后做整体一致性检查
 
@@ -209,7 +209,7 @@ horizon.march.set_march(...)
 
 ### 2) march 未确认时，流程必须暂停
 
-由于 `j6-plugin-set-march` 的硬约束是先问用户 march，所以整个完整适配流程也必须继承这一约束。
+由于 `__SKILL_j6-plugin-__set-march` 的硬约束是先问用户 march，所以整个完整适配流程也必须继承这一约束。
 
 ### 3) prepare 之后不要再继续做结构性改动
 
@@ -228,9 +228,9 @@ horizon.march.set_march(...)
 
 如果本 Skill 与某个子 skill 的细则冲突，以子 skill 为准。例如：
 
-- `j6-plugin-set-march` 要求先询问用户 march
-- `j6-plugin-insert-quant-dequant` 要求每个输入输出独立 stub
-- `j6-plugin-dynamic-block` 要求不要包整个循环
+- `__SKILL_j6-plugin-__set-march` 要求先询问用户 march
+- `__SKILL_j6-plugin-__insert-quant-dequant` 要求每个输入输出独立 stub
+- `__SKILL_j6-plugin-__dynamic-block` 要求不要包整个循环
 
 ### 6) 本 Skill 默认采用“强依赖接入”，禁止兼容性兜底写法
 
@@ -264,10 +264,10 @@ horizon.march.set_march(...)
 - 是否确认了用户要做的是“完整 Horizon QAT 适配”？
 - 是否已经先确认用户的 march？
 - 是否按顺序调用了：
-  - `j6-plugin-set-march`
-  - `j6-plugin-insert-quant-dequant`
-  - `j6-plugin-dynamic-block`
-  - `j6-plugin-prepare`
-  - `j6-plugin-set-fake-quantize`
+  - `__SKILL_j6-plugin-__set-march`
+  - `__SKILL_j6-plugin-__insert-quant-dequant`
+  - `__SKILL_j6-plugin-__dynamic-block`
+  - `__SKILL_j6-plugin-__prepare`
+  - `__SKILL_j6-plugin-__set-fake-quantize`
 - 是否确保所有结构性改动都发生在 `prepare` 前？
 - 是否根据阶段正确设置了 fake quantize 状态？

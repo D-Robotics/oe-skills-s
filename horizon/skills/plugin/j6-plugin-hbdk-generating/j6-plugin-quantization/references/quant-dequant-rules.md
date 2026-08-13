@@ -1,6 +1,6 @@
 # Quant/DeQuant 部署边界插入规则
 
-本文件定义了在模型中插入 `QuantStub`/`DeQuantStub` 的完整规则，供 `j6-plugin-quantization` skill 参考。
+本文件定义了在模型中插入 `QuantStub`/`DeQuantStub` 的完整规则，供 `__SKILL_j6-plugin-__quantization` skill 参考。
 
 ## 目录
 

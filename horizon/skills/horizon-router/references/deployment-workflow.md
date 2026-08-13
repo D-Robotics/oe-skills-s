@@ -25,7 +25,7 @@
   □ 1. 用户是否明确要求"导出 ONNX 再量化"？ → [是/否]
   □ 2. GPU 是否可用（torch.cuda.is_available()）？ → [是/否]
        - 如果不可用：是否已尝试 GPU docker 容器方案？ → [是/否/N/A]
-  □ 3. 是否已尝试 QAT 适配（j6-plugin-adaptation）？ → [是/否]
+  □ 3. 是否已尝试 QAT 适配（__SKILL_j6-plugin-__adaptation）？ → [是/否]
        - 如果未尝试：理由是什么？ → [填写]
   □ 4. 是否存在已有的 .bc 文件证明 QAT 已完成？ → [是/否]
   ```

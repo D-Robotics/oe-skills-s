@@ -1,11 +1,11 @@
 ---
-name: j6-plugin-graph-diff
+name: __SKILL_j6-plugin-__graph-diff
 description: 对比两份 FX Graph 计算图文件，精确定位计算图结构和算子参数差异，并根据 diff 报告在原始模型代码中找到对应的差异位置。
 tools:
   - name: j6_plugin_graph_diff.py
     type: script
     description: 计算图差异对比脚本，解析两个 FX Graph 文件并生成结构化 diff 报告
-    path: j6-plugin-graph-diff/j6_plugin_graph_diff.py
+    path: __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py
     required: true
 ---
 
@@ -17,7 +17,7 @@ tools:
 
 本 Skill 的计算图差异对比**必须**通过调用外挂脚本 `j6_plugin_graph_diff.py` 完成，**严禁** Agent 自己编写 Python 代码实现 diff 逻辑。
 
-- ✅ **必须**：通过 Bash 工具执行 `python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 ... --file2 ...`
+- ✅ **必须**：通过 Bash 工具执行 `python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 ... --file2 ...`
 - ❌ **禁止**：Agent 自行编写 difflib/正则匹配等代码来解析计算图
 - ❌ **禁止**：用 Bash 的 diff 命令替代外挂脚本
 - ❌ **禁止**：用 Read 工具读取两个文件后自行比较
@@ -30,11 +30,11 @@ tools:
 
 ### 3) 脚本路径
 
-外挂脚本位于：`j6-plugin-graph-diff/j6_plugin_graph_diff.py`
+外挂脚本位于：`__SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py`
 
 调用时使用相对路径：
 ```bash
-python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 <path1> --file2 <path2> -o <output_path>
+python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 <path1> --file2 <path2> -o <output_path>
 ```
 
 ## 目标
@@ -133,7 +133,7 @@ Agent 负责**根据 diff 报告进行源码定位和问题分析**：
 
 ```bash
 # 使用外挂脚本对比两个 FX Graph 文件
-python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 fx_graph_1.txt --file2 fx_graph_2.txt -o diff_report.txt
+python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 fx_graph_1.txt --file2 fx_graph_2.txt -o diff_report.txt
 ```
 
 **Agent 职责：**
@@ -326,7 +326,7 @@ PARAMETER_CHANGE (5 处):
 "对比评测和导出的计算图，看看是否一致"
 
 # Agent 执行流程
-1. 【调用脚本】python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 fx_graph_pred.txt --file2 fx_graph_export.txt -o diff_report.txt
+1. 【调用脚本】python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 fx_graph_pred.txt --file2 fx_graph_export.txt -o diff_report.txt
 2. 【分析报告】解析 diff 报告，识别差异类型
 3. 【源码定位】对于关键差异节点，在模型源码中定位
 4. 【判断预期】根据"评测与导出对比"场景，判断差异是否合理：
@@ -359,7 +359,7 @@ PARAMETER_CHANGE (5 处):
 "对比两个模型的计算图结构差异"
 
 # Agent 执行流程
-1. 【调用脚本】python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 model_a_graph.txt --file2 model_b_graph.txt -o diff_report.txt
+1. 【调用脚本】python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 model_a_graph.txt --file2 model_b_graph.txt -o diff_report.txt
 2. 【分析报告】关注 structure_change 类型的差异
 3. 【源码定位】定位到两个模型源码中的对应位置
 4. 【生成报告】说明结构差异的具体含义
@@ -418,18 +418,18 @@ PARAMETER_CHANGE (5 处):
 
 ### 外挂脚本（必须调用）
 
-- **脚本路径**: `j6-plugin-graph-diff/j6_plugin_graph_diff.py`（相对于项目根目录）
+- **脚本路径**: `__SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py`（相对于项目根目录）
 - **Python 库**: `difflib`, `re`, `pathlib`, `dataclasses`
 - **输入**: 两个 FX Graph 文件路径
 - **输出**: 文本格式的 diff 报告
 
-> **硬约束**：Agent 不得自行实现脚本的差异对比逻辑，必须通过 `python j6-plugin-graph-diff/j6_plugin_graph_diff.py` 调用。
+> **硬约束**：Agent 不得自行实现脚本的差异对比逻辑，必须通过 `python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py` 调用。
 
 ### 脚本使用方式
 
 ```bash
 # 基本用法（输出到文件）
-python j6-plugin-graph-diff/j6_plugin_graph_diff.py --file1 graph1.txt --file2 graph2.txt -o report.txt
+python __SKILL_j6-plugin-__graph-diff/j6_plugin_graph_diff.py --file1 graph1.txt --file2 graph2.txt -o report.txt
 ```
 
 ### Agent 所需能力

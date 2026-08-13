@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-consistency-debug
+name: __SKILL_j6-plugin-__consistency-debug
 description: 当用户遇到 Horizon Plugin PyTorch 训练部署一致性问题（QAT 模型正常但 BC/HBM 掉点、export/convert/compile 阶段精度偏差）时使用。本 skill 引导用户按 qat.pt -> qat.export.pt -> qat.bc -> quantized.bc -> hbm 分段定位问题，并在每个阶段帮助适配工具、分析工具产出物。
 ---
 
@@ -20,7 +20,7 @@ description: 当用户遇到 Horizon Plugin PyTorch 训练部署一致性问题�
 | 当前异常现象 | 用来判断优先排查 export、convert 还是 compile / 部署 |
 | 已验证正常和异常的产物 | 必须知道哪一段开始掉点 |
 | 至少一个稳定可复现 badcase，或可复现实验数据集 | `QuantAnalysis`、逐层对比和敏感度分析都依赖稳定输入 |
-| 使用平台 / march | J6E/M 才优先考虑高一致性 QAT 策略 |
+| 使用平台 / march | RDK S100/S100P 才优先考虑高一致性 QAT 策略 |
 | plugin、profiler、hbdk 版本 | 部分接口和一致性策略有版本前提 |
 
 **compile / 板端问题时额外必需：**
@@ -132,9 +132,9 @@ qa.compare_per_layer()
 
 `run()` 必须在 `auto_find_bad_case()`、`set_bad_case()` 或 `load_bad_case()` 之后执行，否则没有可回放输入。
 
-### J6E/M 高一致性 QAT 策略
+### RDK S100/S100P 高一致性 QAT 策略
 
-仅当问题主要表现为 convert 或部署阶段偏差，并且平台是 J6E/M 时，才优先考虑：
+仅当问题主要表现为 convert 或部署阶段偏差，并且平台是 RDK S100/S100P 时，才优先考虑：
 
 ```python
 from horizon_plugin_pytorch.qat_mode import ConsistencyStrategy
@@ -148,7 +148,7 @@ qat_pt = prepare(float_model)
 
 - `hbdk4_compiler >= 4.4.2`，参考资料中建议 plugin 不低于 `3.1.2`。
 - level 0：统计型 scale + high precision qpp + 关闭 requantize fuse，适合不重训的补救评估。
-- level 1：activation 使用 POT scale，开启 resize / gridsample / mean / mod_centered 高一致性路径，推荐作为 J6E/M convert 一致性问题的起点。
+- level 1：activation 使用 POT scale，开启 resize / gridsample / mean / mod_centered 高一致性路径，推荐作为 RDK S100/S100P convert 一致性问题的起点。
 - level 2：activation / weight 都使用 POT scale，在 level 1 仍不足时再尝试。
 - level 1 / level 2 应在设置后重新训练；不要直接套到已有 checkpoint 后声称有效。
 - 高一致性策略主要影响 convert / 部署一致性，对 pre_export 查表转定点问题没有直接帮助。
@@ -270,7 +270,7 @@ qat_pt.module_a = pre_export(qat_pt.module_a)
 | --- | --- | --- |
 | `QuantAnalysis(..., "convert")` | 定位 convert 逐层差异 | 标准排查路径 |
 | `bc_editor`（QatBcEditor） | 删除指定 fake quant 重新 convert 定位 | 逐层无法缩小范围时 |
-| `ConsistencyStrategy` | 评估高一致性策略 | J6E/M 平台 convert 偏差时 |
+| `ConsistencyStrategy` | 评估高一致性策略 | RDK S100/S100P 平台 convert 偏差时 |
 
 #### 执行步骤
 
@@ -318,7 +318,7 @@ editor.run()
 quantized_modified_bc = convert(qat_modified_bc, march)
 ```
 
-5. J6E/M 平台 convert 偏差，评估高一致性策略（按优先级递进）：
+5. RDK S100/S100P 平台 convert 偏差，评估高一致性策略（按优先级递进）：
 
 ```python
 # Level 0：不重训的补救评估
@@ -446,7 +446,7 @@ convert 阶段的特殊关注点：
 | 忽略 fake quant / observer 状态 | 导出前确保 eval + `FakeQuantState.VALIDATION` |
 | torch 和 bc 输入格式不同却直接比较 | 分开跑两侧 profiler，但保证内容一致 |
 | 看到最差层就当根因层 | 找误差起点，结合 sensitivity 分析 |
-| J6E/M convert 掉点直接上 level 2 | 先评估 level 0；再评估 level 1；level 2 是加强方案 |
+| RDK S100/S100P convert 掉点直接上 level 2 | 先评估 level 0；再评估 level 1；level 2 是加强方案 |
 | 对 pre_export 查表问题使用高一致性策略 | 高一致性策略主要改善 convert 偏差 |
 | 只产出 compare_per_layer 不看 sensitivity | compare_per_layer 看累积误差，sensitivity 看单算子贡献，需结合 |
 | compile / 部署问题却用 QuantAnalysis 分析 | compile / 部署问题应按部署侧排查清单逐项检查，QuantAnalysis 不适用此阶段 |

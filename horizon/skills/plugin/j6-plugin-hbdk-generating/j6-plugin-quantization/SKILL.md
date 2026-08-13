@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-quantization
+name: __SKILL_j6-plugin-__quantization
 description: 为基础网络结构生成量化流程代码（set_march → 插入 Quant/DeQuant → 配置量化参数 → prepare → 校准 → QAT 训练）。务必在用户提到模型量化、量化流程、QAT 校准、Horizon 量化适配、HistogramObserver/MinMaxObserver 配置、量化参数配置、校准训练、QuantStub 插入时触发此 skill，即使用户只问其中一个步骤，只要涉及 Horizon 量化流程的任何环节都应触发。
 ---
 
@@ -31,10 +31,10 @@ set_march → 定义模型（含 Quant/DeQuant）→ 配置量化参数 → prep
 
 | march | 平台 | 说明 |
 |-------|------|------|
-| `"nash-p"` | J6P | 推荐，全局激活支持 float16 |
+| `"nash-p"` | RDK S600 | 推荐，全局激活支持 float16 |
 | `"nash-h"` | J6H | 全局激活支持 float16 |
-| `"nash-m"` | J6M | 全局激活为 qint8 |
-| `"nash-e"` | J6E | 全局激活为 qint8 |
+| `"nash-m"` | RDK S100P | 全局激活为 qint8 |
+| `"nash-e"` | RDK S100 | 全局激活为 qint8 |
 | `"nash-b"` | J6B | 全局激活为 qint8 |
 
 如果用户未指定，暂停代码生成，等待用户确认。不同的 march 会影响全局激活类型的选择：
@@ -84,7 +84,7 @@ from horizon_plugin_pytorch.quantization.qconfig_setter import (
 )
 ```
 
-**注意：** 当本 sub-skill 作为 `j6-plugin-hbdk-generating`（编排型 skill）的一部分被调用时，导入语句必须与导出编译子 skill 的导入合并到文件顶部的一个统一导入块中，格式严格遵循 `references/full-pipeline-template.md`。
+**注意：** 当本 sub-skill 作为 `__SKILL_j6-plugin-__hbdk-generating`（编排型 skill）的一部分被调用时，导入语句必须与导出编译子 skill 的导入合并到文件顶部的一个统一导入块中，格式严格遵循 `references/full-pipeline-template.md`。
 
 ### Step 2: 设置平台
 

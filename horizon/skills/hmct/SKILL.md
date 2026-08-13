@@ -1,12 +1,13 @@
 ---
 name: hmct-workflow
 description: >
-  HMCT 模型转换与精度调优总入口。根据用户意图自动路由：
-  (1) 提供了校准数据 → 调用 reference/run_build.py build 执行完整量化构建；
-  (2) 未提供校准数据 → 调用 reference/run_build.py check 使用随机数据快速验证转换流程；
+  HMCT 模型转换与 PTQ 量化总入口——优先使用 hb_compile + YAML 配置方式。
+  根据用户意图自动路由：
+  (1) 提供了校准数据 → 使用 hb_config_generator 生成 YAML 配置，再调用 j6-hbdk-compile 执行编译；
+  (2) 未提供校准数据 → 使用 hb_config_generator 生成快速验证配置，再调用 j6-hbdk-compile 验证；
   (3) 用户希望进行精度调优 → 转交 j6-hmct-cosine-similarity-tuning SKILL 执行多阶段调优；
   (4) 用户希望进行单项精度 debug 分析（节点灵敏度、数据分布、累积误差等）→ 调用 hmct-debugger CLI 执行对应分析工具。
-  当用户提示词中出现 HMCT、模型转换、模型量化、PTQ、精度调优、cosine similarity、节点灵敏度、数据分布、累积误差、debug 等关键词时应触发此 Skill。
+  当用户提示词中出现 HMCT、模型转换、模型量化、PTQ、hb_compile、YAML 配置、精度调优、cosine similarity、节点灵敏度、数据分布、累积误差、debug 等关键词时应触发此 Skill。
 ---
 
 # HMCT 工作流路由
@@ -19,13 +20,13 @@ description: >
 用户请求
   │
   ├─ 意图：模型转换 / 量化构建 / PTQ，且提供了校准数据（cali_data_dir）
-  │   └─→ 路由 A：完整量化构建
+  │   └─→ 路由 A：通过 hb_config_generator 生成 YAML → j6-hbdk-compile 编译
   │
   ├─ 意图：模型转换 / 验证模型 / 快速检查，未提供校准数据
-  │   └─→ 路由 B：快速验证
+  │   └─→ 路由 B：通过 hb_config_generator 生成快速验证 YAML → j6-hbdk-compile 验证
   │
   ├─ 意图：精度调优 / cosine similarity 不达标 / 混精度配置
-  │   └─→ 路由 C：精度调优工作流
+  │   └─→ 路由 C：精度调优工作流（转交 j6-hmct-cosine-similarity-tuning）
   │
   ├─ 意图：单项 debug 分析（灵敏度、分布、累积误差等）
   │   └─→ 路由 D：精度 Debug 工具
@@ -36,11 +37,19 @@ description: >
 
 ---
 
-## 路由 A：完整量化构建（build）
+## 路由 A：完整量化构建（YAML 驱动，推荐）
 
 **触发条件：** 用户希望执行模型量化转换，且提供了校准数据。
 
-**关键词：** 模型转换、量化构建、build_model、PTQ 构建、校准
+**关键词：** 模型转换、量化构建、PTQ 构建、校准、hb_compile、YAML 配置
+
+**优先使用 `hb_config_generator` + `hb_compile` 方式（而非 `run_build.py`）。**
+
+### 工作流
+
+```
+Step 1: 收集参数 → Step 2: hb_config_generator 生成 YAML → Step 3: 用户确认 YAML → Step 4: hb_compile -c 编译
+```
 
 ### 需要收集的参数
 
@@ -49,110 +58,115 @@ description: >
 | 参数 | 说明 |
 |------|------|
 | `--onnx_path` | 输入 ONNX 模型路径 |
-
-#### 校准数据（二选一）
-
-| 参数 | 说明 |
-|------|------|
 | `--cali_data_dir` | 校准数据目录（子目录名需与模型输入名一致） |
-| `--cali_dict_path` | `cali_dict` JSON 文件路径，指定后将覆盖 `--cali_data_dir` |
 
 #### 可选参数
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
 | `--march` | `nash-p` | BPU 芯片架构 |
-| `--input_dict_path` | - | `input_dict` JSON（input_shape / transformer / color_convert 等） |
-| `--quant_config_path` | - | `quant_config` JSON（PTQ 量化配置） |
+| `--input_shape` | 从 ONNX 自动推断 | 输入 shape，如 `[1,3,224,224]` |
+| `--preprocess` | 无 | 预处理参数（mean/std/scale/color_convert/resizer/pyramid 等） |
 | `--name_prefix` | `model` | 输出模型名称或路径前缀 |
-| `--quiet` | 关闭 | 关闭 verbose 输出 |
+| `--calibration_type` | 由 HMCT 决定 | 激活校准方法（`max` / `kl` / `load` 等） |
 
 ### 执行方式
 
 ```bash
-# 最简：ONNX + 校准目录
-python3 HMCT_Skill/reference/run_build.py build \
-    --onnx_path <模型路径> \
-    --cali_data_dir <校准数据目录> \
+# Step 1: 使用 hb_config_generator 生成 YAML 配置
+hb_config_generator \
+    --model-path <模型路径> \
+    --calibration-data-dir <校准数据目录> \
     --march <芯片架构> \
-    --name_prefix <输出前缀>
+    --output-path <输出目录>/compile_config.yaml
 
-# 自定义 cali_dict + input_dict
-python3 HMCT_Skill/reference/run_build.py build \
-    --onnx_path model.onnx \
-    --cali_dict_path cali_dict.json \
-    --input_dict_path input_dict.json \
-    --march nash-e
+# Step 2: 用户确认 YAML 配置（默认必须确认）
+# 向用户展示生成的 YAML 配置摘要（模型路径、march、校准数据等）
 
-# 指定 quant_config
-python3 HMCT_Skill/reference/run_build.py build \
-    --onnx_path model.onnx \
-    --cali_data_dir ./cali_data \
-    --quant_config_path quant_config.json
+# Step 3: 使用 hb_compile 执行编译
+hb_compile -c <输出目录>/compile_config.yaml
+```
+
+### YAML 配置示例
+
+```yaml
+model:
+  onnx: /path/to/model.onnx
+  march: nash-p
+  calibration:
+    data_dir: /path/to/cali_data
+    calibration_type: max
+  input:
+    input_source: pyramid
+    preprocessing:
+      mean: [123.675, 116.28, 103.53]
+      scale: [0.01712475, 0.017507, 0.0174292]
+  output:
+    out_dir: ./compile_output
+    model_name: quantized_model
 ```
 
 ### 执行步骤
 
-1. 确认 `--onnx_path`，未提供则询问
-2. 确认校准数据来源：`--cali_data_dir` 或 `--cali_dict_path`，未提供则询问
-3. 根据用户需求收集可选参数（`--input_dict_path` / `--quant_config_path` / `--name_prefix`）
-4. 确认 `--march` 参数，未指定则使用默认值 `nash-p`
-5. 运行 `run_build.py build` 命令
+1. 确认 `--onnx_path` 和 `--cali_data_dir`，未提供则询问
+2. 确认 `--march` 参数，未指定则使用默认值 `nash-p`
+3. 运行 `hb_config_generator` 生成 YAML 配置
+4. **向用户展示 YAML 配置摘要，等待用户确认**（默认强制门禁）
+5. 用户确认后，转交 **j6-hbdk-compile** Skill 执行 `hb_compile -c`
 6. 检查输出日志，确认构建成功
 7. 向用户报告结果和输出文件路径
 
 ### 参考文档
 
-详细参数说明见 [reference/build_model.md](reference/build_model.md)
+- `hb_config_generator` 使用文档见 `horizon-tc-ui` Skill
+- `hb_compile` YAML 配置参考见 `j6-hbdk-compile` Skill
 
 ---
 
-## 路由 B：快速验证（check）
+## 路由 B：快速验证（YAML 驱动）
 
-**触发条件：** 用户希望验证模型是否能走通转换流程，但未提供校准数据。底层基于 `build_model(check_mode=True)`，使用随机数据完成校准。
+**触发条件：** 用户希望验证模型是否能走通转换流程，但未提供校准数据。
 
 **关键词：** 验证模型、check_model、快速检查、测试转换、能不能转
 
+### 工作流
+
+```
+Step 1: 收集参数 → Step 2: hb_config_generator 生成验证 YAML（启用 check 模式） → Step 3: 用户确认 → Step 4: hb_compile -c 验证
+```
+
 ### 需要收集的参数
 
-`check` 子命令不接收校准数据相关参数（`--cali_data_dir` / `--cali_dict_path`），其余与路由 A 一致。
-
-#### 必填
-
-| 参数 | 说明 |
-|------|------|
-| `--onnx_path` | 输入 ONNX 模型路径 |
-
-#### 可选参数
-
-`--march`（默认 `nash-p`）、`--input_dict_path`、`--quant_config_path`、`--name_prefix`、`--quiet`，含义与路由 A 相同。
+| 参数 | 必填 | 说明 |
+|------|------|------|
+| `--onnx_path` | 是 | 输入 ONNX 模型路径 |
+| `--march` | 否 | BPU 芯片架构，默认 `nash-p` |
+| `--input_shape` | 否 | 输入 shape |
 
 ### 执行方式
 
 ```bash
-# 最简：仅验证 ONNX 模型可转换
-python3 HMCT_Skill/reference/run_build.py check \
-    --onnx_path <模型路径> \
-    --march <芯片架构>
+# Step 1: 生成 YAML 配置（check 模式使用随机校准数据）
+hb_config_generator \
+    --model-path <模型路径> \
+    --march <芯片架构> \
+    --output-path <输出目录>/compile_config.yaml \
+    --check-mode
 
-# 验证 + 自定义 input_dict
-python3 HMCT_Skill/reference/run_build.py check \
-    --onnx_path model.onnx \
-    --input_dict_path input_dict.json \
-    --march nash-e
+# Step 2: 用户确认 YAML 配置
+
+# Step 3: 执行快速验证编译
+hb_compile -c <输出目录>/compile_config.yaml
 ```
 
 ### 执行步骤
 
 1. 确认 `--onnx_path`，未提供则询问
-2. 根据用户需求收集可选参数（`--input_dict_path` / `--quant_config_path` / `--name_prefix`）
-3. 确认 `--march` 参数，未指定则使用默认值 `nash-p`
-4. 运行 `run_build.py check` 命令
-5. 检查输出，若通过则告知用户模型兼容；若失败则分析错误原因
-
-### 参考文档
-
-详细参数说明见 [reference/build_model.md](reference/build_model.md)
+2. 确认 `--march` 参数，未指定则使用默认值 `nash-p`
+3. 运行 `hb_config_generator --check-mode` 生成验证 YAML
+4. **向用户展示 YAML 配置摘要，等待用户确认**
+5. 用户确认后，转交 **j6-hbdk-compile** Skill 执行 `hb_compile -c`
+6. 若通过则告知用户模型兼容；若失败则分析错误原因
 
 ---
 
@@ -177,12 +191,12 @@ python3 HMCT_Skill/reference/run_build.py check \
 | `--node_config_path` | 否 | 固定节点配置文件 |
 | `--num_sample` | 否 | 敏感度分析的 bad case 数量，默认 1 |
 | `--progressive_thresholds` | 否 | 渐进阈值列表，默认 `0.99 0.999 0.9999 0.99999` |
-| `--calibration_type` | 否 | 激活校准方法，写入 `model_config.activation.calibration_type`；默认不指定（由 HMCT 决定）；可传单值（如 `max`）或多值（如 `max kl`，触发 modelwise search），可选值参考 HMCT：`max`、`kl`、`load` 等 |
-| `--per_channel` | 否 | 激活 per-channel 量化开关，写入 `model_config.activation.per_channel`；接受 `true/false`（可同时传两个值触发搜索），HMCT 默认 `false` |
-| `--asymmetric` | 否 | 激活非对称量化开关，写入 `model_config.activation.asymmetric`；接受 `true/false`（可同时传两个值触发搜索），HMCT 默认 `false` |
-| `--bias_correction` | 否 | 是否开启权重 bias correction，写入 `model_config.weight.bias_correction`；接受 `true/false`，HMCT 默认 `disabled` |
-| `--bias_correction_num_sample` | 否 | bias correction 样本数（`int >= 1`），仅 `--bias_correction true` 时生效，HMCT 默认 `1` |
-| `--bias_correction_metric` | 否 | bias correction 误差度量，可选 `cosine-similarity`/`mse`/`mae`/`mre`/`sqnr`/`chebyshev`，仅 `--bias_correction true` 时生效，HMCT 默认 `cosine-similarity` |
+| `--calibration_type` | 否 | 激活校准方法，写入 `model_config.activation.calibration_type`；默认不指定（由 HMCT 决定）；可传单值（如 `max`）或多值（如 `max kl`，触发 modelwise search） |
+| `--per_channel` | 否 | 激活 per-channel 量化开关，接受 `true/false`（可同时传两个值触发搜索） |
+| `--asymmetric` | 否 | 激活非对称量化开关，接受 `true/false`（可同时传两个值触发搜索） |
+| `--bias_correction` | 否 | 是否开启权重 bias correction，接受 `true/false` |
+| `--bias_correction_num_sample` | 否 | bias correction 样本数（`int >= 1`），仅 `--bias_correction true` 时生效 |
+| `--bias_correction_metric` | 否 | bias correction 误差度量，可选 `cosine-similarity`/`mse`/`mae`/`mre`/`sqnr`/`chebyshev` |
 
 ### 执行方式
 
@@ -204,24 +218,7 @@ python3 HMCT_Skill/j6-hmct-cosine-similarity-tuning/script/hmct_precision_tuning
     --onnx_path <模型路径> \
     --cali_data_dir <校准数据目录> \
     --calibration_type max kl
-
-# 显式开关 per_channel / asymmetric / bias_correction
-python3 HMCT_Skill/j6-hmct-cosine-similarity-tuning/script/hmct_precision_tuning.py \
-    --onnx_path <模型路径> \
-    --cali_data_dir <校准数据目录> \
-    --per_channel true false \
-    --asymmetric true false \
-    --bias_correction true \
-    --bias_correction_num_sample 4 \
-    --bias_correction_metric mse
 ```
-
-### 执行步骤
-
-1. 确认用户提供了 `onnx_path` 和 `cali_data_dir`（精度调优必须有校准数据），未提供则询问
-2. 确认 `march` 参数
-3. 按 [j6-hmct-cosine-similarity-tuning/SKILL.md](j6-hmct-cosine-similarity-tuning/SKILL.md) 中定义的完整流程执行
-4. 调优完成后向用户报告结果，包括达标配置和调优报告路径
 
 ### 调优流程概览
 
@@ -281,20 +278,17 @@ INT8 基线 → 全 INT16 ─┬─ 达标 → INT8+INT16 渐进回退
 
 | 用户输入 | 路由 | 原因 |
 |----------|------|------|
-| "帮我把 model.onnx 转换为量化模型，校准数据在 ./cali_data" | A | 有校准数据，执行完整构建 |
-| "构建时帮我加上 input_dict 做归一化预处理" | A | 需要传 `--input_dict_path` |
-| "用 quant_config.json 量化这个模型" | A | 显式 `--quant_config_path` |
+| "帮我把 model.onnx 转换为量化模型，校准数据在 ./cali_data" | A | 有校准数据，执行 YAML 驱动编译 |
+| "构建时帮我加上 input_dict 做归一化预处理" | A | 需传预处理参数到 YAML |
+| "用 quant_config.json 量化这个模型" | A | 按 YAML 配置方式执行 |
 | "我想看下这个模型能不能在 nash-e 上跑通" | B | 验证意图，无校准数据 |
 | "帮我验证一下 model.onnx 能否转换成功" | B | 验证意图 |
-| "用随机数据快速跑一遍流程，校验 input_dict 配置" | B | 验证意图 + `--input_dict_path` |
+| "用随机数据快速跑一遍流程" | B | 验证意图，走 check 模式 |
 | "量化后精度下降了，帮我调优" | C | 精度调优意图 |
 | "cosine similarity 只有 0.95，怎么提升" | C | 精度不达标 |
 | "帮我做混精度配置，把敏感节点设成 INT16" | C | 精度调优意图 |
-| "调优时用 max 校准方法" / "用 kl 和 max 一起搜一下校准" | C | 精度调优 + `--calibration_type` |
-| "开启 per-channel 权重量化做调优" / "试试 asymmetric 激活" / "加上 bias correction" | C | 精度调优 + 量化策略开关 |
 | "帮我看看哪些节点灵敏度最差" | D | 单项 debug 分析 |
 | "画一下 conv1 的数据分布" | D | 单项 debug 分析 |
-| "跑一下累积误差分析" | D | 单项 debug 分析 |
 | "我有个 ONNX 模型想用 HMCT 处理" | 询问 | 意图不明确，需进一步确认 |
 
 ---
@@ -306,7 +300,7 @@ HMCT_Skill/
 ├── SKILL.md                                    ← 本文件（路由入口）
 ├── reference/
 │   ├── build_model.md                          ← build_model / check_model 参考文档
-│   ├── run_build.py                            ← 一键构建/验证脚本
+│   ├── run_build.py                            ← 一键构建/验证脚本（备选路径，推荐用 YAML 方式）
 │   └── debug_tools.md                          ← 精度 debug 工具参考文档
 └── j6-hmct-cosine-similarity-tuning/
     ├── SKILL.md                                ← 精度调优 Skill 定义

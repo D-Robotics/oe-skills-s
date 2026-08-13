@@ -13,7 +13,7 @@ Below we share an approach that uses hierarchical planning followed by phased ex
 ```plain&#x20;text
 You are a task planning expert. I will give you a task. Please break down the process of achieving this goal into 3-5 stages. Describe each stage in one sentence without providing sub-steps or technical details. However, you must record some rules that must be followed throughout the entire task. Output the plan in .md format and place it under the 'plan' subfolder of the working path, so that subsequent stages can refer to your plan smoothly.
 
-Task description: I want to deploy yolov5s on the Horizon J6P platform. Please help me create a new conda environment, perform model quantization (including calibration, QAT, and export), accuracy tuning, model compilation, HBM accuracy verification, and UCP code writing.
+Task description: I want to deploy yolov5s on the Horizon RDK S600 platform. Please help me create a new conda environment, perform model quantization (including calibration, QAT, and export), accuracy tuning, model compilation, HBM accuracy verification, and UCP code writing.
 Final requirements: HBM accuracy loss should not exceed 1% compared to the floating-point model, and the measured latency on the dev board 10.xx.xx.xx should be controlled within 5 ms.
 Working path: /workspace/00_yolov5. Please create a new folder tmp_output for all deployment-related artifacts, and do not affect the original code.
 Working environment: newly created conda environment, GPU cards 3 and 4 are available.
@@ -24,7 +24,7 @@ The generated deployment plan should confirm that it includes correct global rul
 
 1. Quantization tool: For PyTorch models, `horizon_plugin_pytorch` should be used for quantization adaptation. Do not fall back to exporting ONNX and using HMCT quantization due to any exceptions, unless explicitly permitted by the user.
 
-2. Basic quantization configuration: J6E/M should use full int8, while J6H/P should use fp16 + int8.
+2. Basic quantization configuration: RDK S100/S100P should use full int8, while J6H/RDK S600 should use fp16 + int8.
 
 Based on the above prompt, five stages were identified: Environment Setup, Model Preparation and Plugin Quantization Adaptation, Accuracy Tuning, Export/Compilation and HBM Accuracy Verification, and UCP Deployment Code Writing.
 
@@ -48,17 +48,17 @@ It is recommended to perform the following checks:
 
 2. Model Preparation and Plugin Quantization Adaptation
 
-For quantization adaptation, verify that the plan calls three skills in sequence: the adaptation skill `j6-plugin-adaptation`, the adaptation check skill `j6-plugin-model-check-result`, and the model export skill `j6-plugin-export`.
+For quantization adaptation, verify that the plan calls three skills in sequence: the adaptation skill `__SKILL_j6-plugin-__adaptation`, the adaptation check skill `__SKILL_j6-plugin-__model-check-result`, and the model export skill `__SKILL_j6-plugin-__export`.
 
-1. Brief introduction to the `j6-plugin-adaptation` skill:
+1. Brief introduction to the `__SKILL_j6-plugin-__adaptation` skill:
 
 * This skill contains five sub-skills underneath.
 
-2. Brief introduction to the `j6-plugin-model-check-result` skill:
+2. Brief introduction to the `__SKILL_j6-plugin-__model-check-result` skill:
 
 * This skill mainly performs anomaly checks in the following five aspects.
 
-3. Brief introduction to the `j6-plugin-export` skill:
+3. Brief introduction to the `__SKILL_j6-plugin-__export` skill:
 
 * This skill constructs a standalone `export.py` file. It does not add export logic to the training/evaluation scripts, does not modify the model structure or qconfig, and loads the quantized weights generated in the previous steps. During the export process, it checks that the model correctly includes FakeQuantize modules.
 
@@ -72,7 +72,7 @@ For more complex models, some manual configurations (such as fixing scales, fp32
 
 4. Export/Compilation and HBM Accuracy Verification
 
-* Export/Compilation: The agent may choose `j6-plugin-hbdk-generating` to help generate basic compilation code (which by default removes all quantization/dequantization nodes). However, if you need to convert inputs to pyramid/resizer, or perform more complex node removal tasks (e.g., removing all quantization nodes but not altering homo-offset related nodes), guide the agent to use `j6-hbdk-compile`, which supports more complex compilation scenarios.
+* Export/Compilation: The agent may choose `__SKILL_j6-plugin-__hbdk-generating` to help generate basic compilation code (which by default removes all quantization/dequantization nodes). However, if you need to convert inputs to pyramid/resizer, or perform more complex node removal tasks (e.g., removing all quantization nodes but not altering homo-offset related nodes), guide the agent to use `j6-hbdk-compile`, which supports more complex compilation scenarios.
 
 * HBM Accuracy Verification: If you do not have a directly connected development board, or if full-dataset accuracy testing would take too long, guide the agent to use `quantized.bc` (which has the same binary output as HBM) to run a few key cases for visualization. If a development board is available, the agent will invoke `j6-ucp-hbm-infer` to write hbm\_infer code.
 

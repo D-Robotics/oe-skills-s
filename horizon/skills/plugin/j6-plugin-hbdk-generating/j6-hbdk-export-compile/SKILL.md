@@ -17,7 +17,7 @@ export QAT BC → convert → remove_io_op → statistics → compile HBM
 
 ## 前置条件
 
-本 Skill 依赖 `j6-plugin-quantization` skill 的输出：
+本 Skill 依赖 `__SKILL_j6-plugin-__quantization` skill 的输出：
 - 校准后或 QAT 训练后的模型（`calib_net` 或 `qat_net`）
 - 示例输入（`example_input`）
 - 目标平台 march
@@ -35,7 +35,7 @@ from hbdk4.compiler import convert, compile, statistics, save
 2. **`convert, compile, statistics, save` 必须全部从 `hbdk4.compiler` 导入。** 不得从 `horizon_plugin_pytorch.quantization` 或任何其他模块路径导入。
 3. 不得使用其他导入路径替代上述路径。
 
-**注意：** 当本 sub-skill 作为 `j6-plugin-hbdk-generating`（编排型 skill）的一部分被调用时，导入语句必须与量化子 skill 的导入合并到文件顶部的一个统一导入块中，格式严格遵循 `references/full-pipeline-template.md`。
+**注意：** 当本 sub-skill 作为 `__SKILL_j6-plugin-__hbdk-generating`（编排型 skill）的一部分被调用时，导入语句必须与量化子 skill 的导入合并到文件顶部的一个统一导入块中，格式严格遵循 `references/full-pipeline-template.md`。
 
 ## Step 1: 导出 QAT BC
 

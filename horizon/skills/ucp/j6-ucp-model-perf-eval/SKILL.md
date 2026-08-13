@@ -5,11 +5,11 @@ description: 自动化 hrt_model_exec perf 板端性能评测。触发条件：�
 
 # Model Perf Eval
 
-通过 SSH/SCP 将 `hrt_model_exec` 部署到远程 J6 aarch64 开发板，遍历用户指定的 thread_num 和 core_id 参数组合运行 perf 评测，收集 `--profile_path` 结构化输出与 BPU/CPU 段级性能数据，生成性能汇总报告与最优配置推荐，并将报告保存到本地文件。
+通过 SSH/SCP 将 `hrt_model_exec` 部署到远程 RDK S 系列 aarch64 开发板，遍历用户指定的 thread_num 和 core_id 参数组合运行 perf 评测，收集 `--profile_path` 结构化输出与 BPU/CPU 段级性能数据，生成性能汇总报告与最优配置推荐，并将报告保存到本地文件。
 
 ## 适用场景
 
-- 在 J6 实板上评测 .hbm 模型推理性能（延迟、FPS）
+- 在 RDK S 系列 实板上评测 .hbm 模型推理性能（延迟、FPS）
 - 扫描不同 thread_num / core_id 组合，探索最佳性能配置
 - 远程部署 hrt_model_exec 到 aarch64 板端并执行 benchmark
 - 对比不同配置的性能差异，生成结构化报告
@@ -58,7 +58,7 @@ description: 自动化 hrt_model_exec perf 板端性能评测。触发条件：�
 - `1` = BPU Core 0
 - `2` = BPU Core 1
 - `1,2` = 双核并行
-- J6 有 2 个 BPU 核心，有效值：0, 1, 2, "1,2"
+- RDK S 系列 有 2 个 BPU 核心，有效值：0, 1, 2, "1,2"
 
 **模型文件位置判断**：
 - 用户说明在板端：直接使用板端路径

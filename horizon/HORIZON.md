@@ -33,7 +33,7 @@
 - 修改模型相关配置后，必须使用对应工具做最小可运行验证；模型相关配置包括量化配置、编译配置、导出配置、推理配置、输入预处理配置和精度/性能评测配置。
 - 验证失败时，先说明失败命令、关键报错和判断出的原因，再基于错误原因修改配置并重试。**同一方法最多重试 1 次**（总计 2 次尝试）。第 2 次仍失败则必须切换策略（换工具、查文档、检查环境）或向用户报告阻塞，禁止继续用相同方法重试。
 - 不要在未验证的情况下声称配置可用；如果环境、数据或板卡缺失导致无法验证，必须明确说明缺失项和剩余风险。
-- 默认量化配置按板卡类型选择：`nash-p` / J6P 使用 `fp16+int8`，`nash-e/m` / J6E/J6M 与 `nash-b` / J6B 使用 `int8`。
+- 默认量化配置按板卡类型选择：`nash-p` / RDK S600 使用 `fp16+int8`，`nash-e/m` / RDK S100/S100P 与 `nash-b` / J6B 使用 `int8`。
 
 ## 5. MCP 规则
 
@@ -66,13 +66,13 @@
 
 ### Horizon Plugin (plugin)
 
-- `j6-plugin-adaptation@1.0.0` -> `.horizon/skills/plugin/j6-plugin-adaptation/SKILL.md`
-- `j6-plugin-export@1.0.1` -> `.horizon/skills/plugin/j6-plugin-export/SKILL.md`
-- `j6-plugin-model-check-result@1.0.0` -> `.horizon/skills/plugin/j6-plugin-model-check-result/SKILL.md`
-- `j6-plugin-graph-diff@1.0.0` -> `.horizon/skills/plugin/j6-plugin-graph-diff/SKILL.md`
-- `j6-plugin-hbdk-generating@1.2.0` -> `.horizon/skills/plugin/j6-plugin-hbdk-generating/SKILL.md`
-- `j6-plugin-consistency-debug@1.0.0` -> `.horizon/skills/plugin/j6-plugin-consistency-debug/SKILL.md`
-- `j6-plugin-precision-tuning@1.0.0` -> `.horizon/skills/plugin/j6-plugin-precision-tuning/SKILL.md`
+- `__SKILL_j6-plugin-__adaptation@1.0.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__adaptation/SKILL.md`
+- `__SKILL_j6-plugin-__export@1.0.1` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__export/SKILL.md`
+- `__SKILL_j6-plugin-__model-check-result@1.0.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__model-check-result/SKILL.md`
+- `__SKILL_j6-plugin-__graph-diff@1.0.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__graph-diff/SKILL.md`
+- `__SKILL_j6-plugin-__hbdk-generating@1.2.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__hbdk-generating/SKILL.md`
+- `__SKILL_j6-plugin-__consistency-debug@1.0.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__consistency-debug/SKILL.md`
+- `__SKILL_j6-plugin-__precision-tuning@1.0.0` -> `.horizon/skills/plugin/__SKILL_j6-plugin-__precision-tuning/SKILL.md`
 
 ### HMCT / Quantization (hmct)
 

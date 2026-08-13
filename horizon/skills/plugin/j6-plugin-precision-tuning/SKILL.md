@@ -1,5 +1,5 @@
 ---
-name: j6-plugin-precision-tuning
+name: __SKILL_j6-plugin-__precision-tuning
 description: 当用户遇到 Horizon Plugin PyTorch 精度调优问题时使用。本 skill 聚焦 PyTorch 侧精度调优，不处理 export、convert、compile 或板端一致性问题。
 ---
 
@@ -27,7 +27,7 @@ description: 当用户遇到 Horizon Plugin PyTorch 精度调优问题时使用�
 | 当前异常阶段：`Calibration` / `QAT` | 决定先走哪条排查路径 |
 | 至少一个稳定评测指标 | 防止只盯单帧数值、忽略真实精度 |
 | 当前模型类型：float / calibration / qat | 防止用错工具和比较对象 |
-| 平台 / march：J6E/M 还是 J6P | 决定 int16 / fp16 的主路线 |
+| 平台 / march：RDK S100/S100P 还是 RDK S600 | 决定 int16 / fp16 的主路线 |
 | 用于查 badcase 的 dataloader | `QuantAnalysis` 后续步骤都依赖它 |
 | 现有产物：敏感度表、逐层对比结果等（若已有 `model_check_result.txt` 也可作为背景参考） | 避免重复劳动 |
 
@@ -96,7 +96,7 @@ qat_model = prepare(model, example_inputs=example_inputs, qconfig_setter=setter)
 - `SensitivityTemplate` 是当前仓库里真实存在的模板接口。
 - `topk_or_ratio` 可以传整数或比例。
 - `sensitive_type` 取值为 `activation` / `weight` / `both`。
-- `ModuleNameTemplate` 常用于 J6P 场景下把默认输出先设成 `torch.float16`。
+- `ModuleNameTemplate` 常用于 RDK S600 场景下把默认输出先设成 `torch.float16`。
 
 ### 2) `get_qconfig`
 
@@ -329,7 +329,7 @@ set_qat_mode(QATMode.WithBN)
 1. 先得到一个“精度上限比较靠谱”的高精度基线。
 2. 再逐步减少高精度算子比例，直到找到兼顾性能与精度的配置。
 
-#### J6E/M
+#### RDK S100/S100P
 
 建议顺序：
 
@@ -338,9 +338,9 @@ set_qat_mode(QATMode.WithBN)
 3. 全 int8 不达标时，基于敏感度结果做 `int8 / int16` 混合精度。
 4. 若全 int16 仍不够，再考虑少量 `fp16`，而不是过早全面铺开 fp16。
 
-#### J6P
+#### RDK S600
 
-J6P 浮点能力更强，通常更自然的起点是：
+RDK S600 浮点能力更强，通常更自然的起点是：
 
 - 非 GEMM 算子先走 `torch.float16`
 - Conv / Matmul 等 GEMM 算子从 `int8/int16` 开始权衡
