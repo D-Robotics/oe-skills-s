@@ -36,14 +36,24 @@ bash "$RESOURCE_DIR/setup.sh" "$PROJECT_ROOT"
 
 - 在 `PROJECT_ROOT` 下创建 `.horizon/` 目录
 - 铺设 docs、skills、HORIZON.md、skill-index.json、VERSION
+- 记录 `INSTALLED_REF`（安装来源锚点；未用 `--ref` 时回退为 VERSION 值）
 - 跳过含 `eval.json` 的 `test/` 目录
 - 向 `CLAUDE.md` / `AGENTS.md` 注入路由规则（幂等，不会重复注入）
+
+### 升级已安装的 workspace
+
+```bash
+bash "$RESOURCE_DIR/setup.sh" --update --ref <已发布 tag> "$PROJECT_ROOT"
+```
+
+`--update` 先比较已安装 `.horizon/VERSION` 与资源 VERSION：相同则直接跳过（幂等）；不同则**重建** `.horizon/`（先删除再铺设，旧版残留文件会被清除，但用户在 `.horizon/` 内的本地修改也会被丢弃）。`--force` 在版本相同时强制重建。`--ref` 记录进 `INSTALLED_REF` 供安装器比对 registry。
 
 ## 5. 安装后检查
 
 ```bash
 test -f "$PROJECT_ROOT/.horizon/HORIZON.md"
 test -f "$PROJECT_ROOT/.horizon/VERSION"
+test -f "$PROJECT_ROOT/.horizon/INSTALLED_REF"
 test -f "$PROJECT_ROOT/.horizon/skill-index.json"
 test -f "$PROJECT_ROOT/.horizon/skills/horizon-router/SKILL.md"
 ```
@@ -91,5 +101,5 @@ codex mcp add oe-mcp --url https://mcp.oe.horizon.auto/mcp
 ## 8. 常见问题
 
 - 如果 `setup.sh` 报找不到 `horizon/` 目录，确认资源目录结构完整
-- 如果 `.horizon/` 已存在，`setup.sh` 会覆盖更新，不会丢失用户自己的文件（只覆盖 horizon 资源文件）
+- 如果 `.horizon/` 已存在：直接重跑安装是覆盖式铺设（合并，不删旧文件）；升级请用 `--update`（重建式，先删后铺、无旧文件残留，但 `.horizon/` 内的本地修改会丢失）
 - `setup.sh` 只会向已有的 `CLAUDE.md` / `AGENTS.md` 注入路由规则；如果两个文件都不存在，必须先按第 3 步创建对应文件再执行安装
