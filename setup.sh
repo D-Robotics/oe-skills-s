@@ -4,8 +4,10 @@
 #
 # 用法: bash setup.sh <project-root>
 #
-# 将本脚本同级的 horizon/ 目录中的资源铺设到 <project-root>/.horizon/，
-# 并向 CLAUDE.md / AGENTS.md 注入路由规则。
+# 将资源铺设到 <project-root>/.horizon/，并向 CLAUDE.md / AGENTS.md
+# 注入路由规则。资源位置自适应两种布局：
+#   - Pack 仓库根执行：资源在 ./horizon/（本脚本同级子目录）
+#   - Hub 镜像目录执行：资源与本脚本同层（rsync 平铺 + setup.sh 覆盖层）
 #
 set -euo pipefail
 
@@ -21,7 +23,11 @@ if ! PROJECT_ROOT="$(cd "$1" 2>/dev/null && pwd)"; then
   echo "ERROR: 项目目录不存在或无法访问: $1" >&2
   exit 1
 fi
-HORIZON_SRC="$RESOURCE_DIR/horizon"
+if [ -d "$RESOURCE_DIR/horizon" ]; then
+  HORIZON_SRC="$RESOURCE_DIR/horizon"
+else
+  HORIZON_SRC="$RESOURCE_DIR"
+fi
 HORIZON_DST="$PROJECT_ROOT/.horizon"
 
 if [ ! -d "$HORIZON_SRC" ]; then
