@@ -7,7 +7,7 @@ license: Apache-2.0
 
 # UCP Perfetto Inference Analysis
 
-**Version:** `v1.1.0`
+**Version:** `1.0.0`
 
 Use this skill for **UCP model inference** Perfetto traces when the goal is to quickly find, triage, and explain likely performance issues in the inference path.
 

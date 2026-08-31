@@ -7,7 +7,7 @@ license: Apache-2.0
 
 # RDK S 系列 HBDK Compile - 通用模型编译 Skill
 
-> 版本: 1.1.8
+> 版本: 1.0.0
 
 ## 概述
 

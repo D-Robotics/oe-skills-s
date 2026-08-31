@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import re
 import subprocess
@@ -36,6 +37,28 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_source_version_is_v1_release(self):
         self.assertEqual((ROOT / "horizon" / "VERSION").read_text(encoding="utf-8").strip(), "1.0.0")
+
+    def test_skill_index_versions_match_indexed_skill_frontmatter(self):
+        index = json.loads((ROOT / "horizon" / "skill-index.json").read_text(encoding="utf-8"))
+        skill_paths = sorted(SKILLS_ROOT.rglob("SKILL.md"))
+
+        for name, entry in index["paths"].items():
+            skill_path = ROOT / "horizon" / entry["skillFile"].removeprefix(".horizon/")
+            if not skill_path.exists():
+                skill_path = next(
+                    (
+                        path
+                        for path in skill_paths
+                        if re.search(r"(?m)^name:\s*" + re.escape(name) + r"\s*$", frontmatter(path.read_text(encoding="utf-8"), path))
+                    ),
+                    skill_path,
+                )
+            self.assertTrue(skill_path.exists(), name)
+            header = frontmatter(skill_path.read_text(encoding="utf-8"), skill_path)
+            version = re.search(r"(?m)^version:\s*(\S+)\s*$", header)
+            self.assertIsNotNone(version, name)
+            self.assertEqual(entry["version"], version.group(1), name)
+            self.assertEqual(entry["version"], "1.0.0", name)
 
     def test_setup_records_the_requested_release_ref(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as temporary_directory:
