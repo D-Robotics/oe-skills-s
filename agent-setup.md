@@ -2,6 +2,8 @@
 
 本文档给 agent 使用。用户把包含本文件的目录放到任意位置后，agent 按以下步骤完成项目初始化。
 
+当前发布版本：`v1.0.0`。
+
 ## 1. 定位资源目录
 
 找到本文件（`agent-setup.md`）所在目录的绝对路径，记为 `RESOURCE_DIR`。
@@ -43,7 +45,7 @@ bash "$RESOURCE_DIR/setup.sh" "$PROJECT_ROOT"
 ### 升级已安装的 workspace
 
 ```bash
-bash "$RESOURCE_DIR/setup.sh" --update --ref <已发布 tag> "$PROJECT_ROOT"
+bash "$RESOURCE_DIR/setup.sh" --update --ref v1.0.0 "$PROJECT_ROOT"
 ```
 
 `--update` 先比较已安装 `.horizon/VERSION` 与资源 VERSION：相同则直接跳过（幂等）；不同则**重建** `.horizon/`（先删除再铺设，旧版残留文件会被清除，但用户在 `.horizon/` 内的本地修改也会被丢弃）。`--force` 在版本相同时强制重建。`--ref` 记录进 `INSTALLED_REF` 供安装器比对 registry。

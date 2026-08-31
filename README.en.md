@@ -4,6 +4,8 @@
 
 A collection of Agent skills for Horizon OpenExplorer (OE) toolchain scenarios. Centered around core steps such as PTQ/QAT quantization, HBDK compilation, UCP on-board inference, performance and accuracy evaluation, this manual modularizes path knowledge, stage dependencies, and verification processes, enabling Agents to complete end-to-end optimization from floating-point models to on-board deployment in a streamlined workflow.
 
+> Current release: `v1.0.0`.
+
 # Features
 
 * Toolchain Routing and Orchestration: `horizon-router` serves as the top-level entry point, dispatching requests to the appropriate sub-skill based on the `description` field of each skill in `skill-index.json`.

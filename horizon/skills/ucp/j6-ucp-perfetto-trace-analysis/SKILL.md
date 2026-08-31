@@ -1,7 +1,8 @@
 ---
 name: j6-ucp-perfetto-trace-analysis
 description: Use this skill whenever the user wants to quickly locate, diagnose, or analyze likely performance bottlenecks in a UCP model inference Perfetto trace. Trigger on requests about UCP inference traces, `.pftrace` files, inference latency, slow inference, pipeline stalls, CPU/BPU gaps, OpInfer delays, dispatch or response delay, low effective occupancy, critical-path investigation, or trace-based performance triage in the UCP inference path. This skill is specialized for UCP / UCP-like inference-chain performance analysis and fast bottleneck localization, not generic Perfetto profiling unrelated to UCP inference.
-version: v1.1.0
+version: 1.0.0
+license: Apache-2.0
 ---
 
 # UCP Perfetto Inference Analysis

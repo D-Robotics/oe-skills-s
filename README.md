@@ -4,6 +4,8 @@
 
 > 面向 Horizon OpenExplorer（OE）工具链场景的 Agent Skills 集合。围绕 PTQ/QAT 量化、HBDK 编译、UCP 板端推理、性能与精度评估等核心环节，将路径知识、阶段依赖和验证流程模块化，支持 Agent 按流程完成从浮点模型到板端部署的端到端优化。
 
+> 当前发布版本：`v1.0.0`。
+
 # 功能介绍
 
 * **工具链路由编排**：`horizon-router` 作为顶层入口，依据 `skill-index.json` 中每个 Skill 的 `description` 字段分流到对应子 Skill
