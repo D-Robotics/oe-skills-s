@@ -9,6 +9,10 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS_ROOT = ROOT / "horizon" / "skills"
+CREATE_APP_TOKEN_ACTION = (
+    "actions/create-github-app-token@"
+    "fee1f7d63c2ff003460e3d139729b119787bc349"
+)
 
 
 def frontmatter(text: str, path: Path) -> str:
@@ -119,7 +123,7 @@ class ReleaseContractTests(unittest.TestCase):
         self.assertEqual(document["permissions"], {"contents": "read"})
         self.assertIn("RDK_RELEASE_DISPATCHER_PRIVATE_KEY", workflow)
         self.assertIn("github.event.release.prerelease", workflow)
-        self.assertIn("actions/create-github-app-token@v2", workflow)
+        self.assertIn(CREATE_APP_TOKEN_ACTION, workflow)
         self.assertIn(
             "repos/D-Robotics/rdk-skills/actions/workflows/component-upgrade.yml/dispatches",
             workflow,
@@ -129,7 +133,7 @@ class ReleaseContractTests(unittest.TestCase):
         token_step = next(
             step
             for step in document["jobs"]["notify-hub"]["steps"]
-            if step.get("uses") == "actions/create-github-app-token@v2"
+            if step.get("uses") == CREATE_APP_TOKEN_ACTION
         )
         self.assertEqual(
             token_step["with"]["app-id"],
