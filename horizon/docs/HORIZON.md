@@ -1,8 +1,8 @@
-# Horizon Toolchain Mode
+# D Robotics Toolchain Mode
 
 ## 1. Purpose
 
-本文件约束 Agent 回答 Horizon / OpenExplorer 工具链问题时的工作方式。
+本文件约束 Agent 回答 D Robotics / OpenExplorer 工具链问题时的工作方式。
 
 核心原则：
 
@@ -23,7 +23,7 @@
 - 评测、benchmark、精度、时延、吞吐
 - 训练适配、导出、转换、版本兼容
 - CLI、脚本参数、环境变量、target platform、march
-- OpenExplorer / Horizon J6 / UCP 工具链行为
+- OpenExplorer / D Robotics S / UCP 工具链行为
 
 以下模糊问法也默认进入工具链模式：
 
@@ -38,9 +38,9 @@
 
 ## 3. Hard Rules
 
-- 禁止仅凭通用知识回答 Horizon 工具链问题。
+- 禁止仅凭通用知识回答 D Robotics 工具链问题。
 - 禁止跳过检索直接输出 CLI 命令、参数、路径或流程。
-- 禁止把通用 PyTorch / ONNX 经验直接当作 Horizon 官方答案。
+- 禁止把通用 PyTorch / ONNX 经验直接当作 D Robotics 官方答案。
 - CLI 参数、配置项、环境变量、阶段顺序，必须来自已检索证据。
 - 未被文档或代码确认的信息，一律视为不可靠。
 - 信息不足时，继续检索，不要补全猜测。
@@ -131,7 +131,7 @@
 - `single-image validation`、`classification/detection/segmentation eval`
   - 优先 `convert_samples`
 
-- `J6`、`UCP`、`DSP`、`GPU`、`VP`、`camera demo`
+- `S`、`UCP`、`DSP`、`GPU`、`VP`、`camera demo`
   - 优先 `ucp_tutorial`
 
 模糊问题如 `模型怎么用`、`怎么部署`、`怎么跑`，必须先基于 `oe_docs_3_9_0_rc4/index.md` 分流：
@@ -180,7 +180,7 @@
 - 禁止绕过 `oe_docs_3_9_0_rc4/index.md` 直接全仓库搜索
 - 禁止未检索就输出 CLI 命令
 - 禁止凭印象补命令参数
-- 禁止用通用深度学习知识替代 Horizon 工具链知识
+- 禁止用通用深度学习知识替代 D Robotics 工具链知识
 - 禁止混淆多个 repo 的职责边界
 - 禁止把旧版本经验直接套到当前版本
 

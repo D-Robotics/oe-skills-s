@@ -1,4 +1,4 @@
-# Horizon Workspace Agent Setup
+# D Robotics Workspace Agent Setup
 
 本文档给 agent 使用。用户把包含本文件的目录放到任意位置后，agent 按以下步骤完成项目初始化。
 
@@ -57,15 +57,15 @@ test -f "$PROJECT_ROOT/.horizon/HORIZON.md"
 test -f "$PROJECT_ROOT/.horizon/VERSION"
 test -f "$PROJECT_ROOT/.horizon/INSTALLED_REF"
 test -f "$PROJECT_ROOT/.horizon/skill-index.json"
-test -f "$PROJECT_ROOT/.horizon/skills/horizon-router/SKILL.md"
+test -f "$PROJECT_ROOT/.horizon/skills/drobotics-router/SKILL.md"
 ```
 
 ## 6. 初始化后如何使用
 
 1. 先看 `.horizon/HORIZON.md` 了解工作区规则和内置 skill 清单
 2. 查找具体 skill 路径时，以 `.horizon/skill-index.json` 为准
-3. 当任务属于 Horizon 范畴但尚未明确落到某个具体 skill 时，先走 `.horizon/skills/horizon-router/SKILL.md` 做顶层路由
-4. 再由 horizon-router 顶层 skill 分流到具体的子 skill
+3. 当任务属于 D Robotics 范畴但尚未明确落到某个具体 skill 时，先走 `.horizon/skills/drobotics-router/SKILL.md` 做顶层路由
+4. 再由 drobotics-router 顶层 skill 分流到具体的子 skill
 
 ## 7. 配置 oe-mcp（按需）
 

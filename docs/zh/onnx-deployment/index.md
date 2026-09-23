@@ -16,7 +16,7 @@
 output
 明白。请告诉我你的任务描述，我将为你拆分为 3～5 个概略计划阶段，并记录关键规则
 
-"我要在地平线 RDK S100 上量化部署一个 ONNX 分类模型，编写部署代码，在容器中交叉编译后推到到开发板{BOARD_IP}上测试一下分类结果是否可与浮点模型对齐。
+"我要在地瓜机器人 RDK S100 上量化部署一个 ONNX 分类模型，编写部署代码，在容器中交叉编译后推到到开发板{BOARD_IP}上测试一下分类结果是否可与浮点模型对齐。
 测试的docker容器为****，
 工作目录放在 /open_explorer/work_dir/下，不要阅读该目录以外的文件。
 模型路径在容器的：/open_explorer/work_dir/models/resnet50.onnx，
@@ -42,7 +42,7 @@ output
 
 1. **模型解析与PTQ量化**
 
-针对该阶段建议直接引导agent参考`j6-hmct-cosine-similarity-tuning`设计该阶段的计划（无需使用其他工具做多余的尝试），重点聚焦在精度调优上。该skill的执行流程可参考如下流程图：
+针对该阶段建议直接引导agent参考`s-hmct-cosine-similarity-tuning`设计该阶段的计划（无需使用其他工具做多余的尝试），重点聚焦在精度调优上。该skill的执行流程可参考如下流程图：
 
 ![](images/diagram.png)
 
@@ -60,21 +60,21 @@ output
 
 2. **模型编译与定点精度验证**
 
-**模型编译**：若agent参考用户手册或历史信息跑偏使用hb\_compile等工具的话，建议引导agent改写计划使用`j6-hbdk-compile`来编译上一步的产物`ptq_model.onnx`。
+**模型编译**：若agent参考用户手册或历史信息跑偏使用hb\_compile等工具的话，建议引导agent改写计划使用`s-hbdk-compile`来编译上一步的产物`ptq_model.onnx`。
 
-**定点精度验证**：若您没有可直连的开发板，可引导agent改用quantized.bc（与hbm输出二进制一致）跑几个关键case的可视化。若有可用的开发板，则agent会调用`j6-ucp-hbm-infer`编写hbm\_infer代码或者使用`hb_verifier`工具进行一致性验证。
+**定点精度验证**：若您没有可直连的开发板，可引导agent改用quantized.bc（与hbm输出二进制一致）跑几个关键case的可视化。若有可用的开发板，则agent会调用`s-ucp-hbm-infer`编写hbm\_infer代码或者使用`hb_verifier`工具进行一致性验证。
 
 > 请注意，若开发板不可达，请不要让agent使用hbm\_infer在本地推理hbm，速度非常慢。
 
 3. **板端部署代码编写与交叉编译**
 
-该流程主要参考`j6-ucp-infer-generating`这个skill。正常情况下agent都会主动帮忙设计冒烟测试对比部署代码与python端的一致性，若无，则建议引导其补充。
+该流程主要参考`s-ucp-infer-generating`这个skill。正常情况下agent都会主动帮忙设计冒烟测试对比部署代码与python端的一致性，若无，则建议引导其补充。
 
 若无可使用的开发板，可引导agent基于quantized.bc，在x86端编译可执行程序进行ucp代码的正确性验证。
 
 ## 3. 分阶段执行
 
-> 如果发现使用过程中发现agent存在长时间调试的情况。可以在交互时提示agent使用地平线提供的skill，提升效率，示例对话：**建议查看.horizon的skill**。
+> 如果发现使用过程中发现agent存在长时间调试的情况。可以在交互时提示agent使用地瓜机器人提供的skill，提升效率，示例对话：**建议查看.horizon的skill**。
 
 基于前面详细的计划，agent大概花了10分钟的时间就完成了量化调优，模型编译，板端代码编写以及一致性验证的工作。
 

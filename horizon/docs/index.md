@@ -1,7 +1,7 @@
 # OpenExplorer 代码仓库索引 (oe-mcp)
 
 > 本文件为 oe-mcp `search_code` 的路由入口。根据用户意图中的关键词，定位到对应仓库的详细索引文件。
-> 版本: J6 OpenExplorer v3.9.0 RC4 | BPU: Nash 系列 (NASH_B / NASH_P / NASH_E)
+> 版本: S OpenExplorer v3.9.0 RC4 | BPU: Nash 系列 (NASH_B / NASH_P / NASH_E)
 
 ## 仓库总览
 

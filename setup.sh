@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Horizon Workspace 初始化脚本
+# D Robotics Workspace 初始化脚本
 #
 # 用法: bash setup.sh [--update] [--force] [--ref <tag>] <project-root>
 #
@@ -151,15 +151,15 @@ printf '%s\n' "$RESOLVED_REF" > "$HORIZON_DST/INSTALLED_REF"
 echo "  [ok] INSTALLED_REF ($RESOLVED_REF)"
 
 # ── 2. 注入路由规则到 CLAUDE.md / AGENTS.md ────────────────────────
-MARKER='# Horizon Workspace Rules'
+MARKER='# D Robotics Workspace Rules'
 
 ROUTING_RULES="$MARKER
 
-If the user request involves Horizon toolchain related topics
+If the user request involves D Robotics toolchain related topics
 (quantization, compile, deploy, evaluation, training, CLI usage, version issues),
 you MUST follow the project rules defined in .horizon/HORIZON.md.
 
-For Horizon toolchain related tasks:
+For D Robotics toolchain related tasks:
 - Do NOT guess toolchain APIs or CLI parameters based on general LLM knowledge.
 - If uncertain, you MUST retrieve documentation before answering."
 

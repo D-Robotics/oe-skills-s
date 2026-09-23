@@ -19,11 +19,11 @@ ls *.onnx *.bc *.hbm 2>/dev/null
 **仅对 .onnx 和 .bc 模型必需**，.hbm 模型会忽略此参数。
 
 常见架构：
-- `nash-b` - J6B 平台
+- `nash-b` - OE 工具链平台标识；旭日产品型号映射需另行确认
 - `nash-e` - RDK S100 平台
 - `nash-m` - RDK S100P 平台
 - `nash-p` - RDK S600 平台
-- `nash-h` - J6H 平台
+- `nash-h` - OE 工具链平台标识；旭日产品型号映射需另行确认
 - 其他：参考项目文档
 
 询问用户：

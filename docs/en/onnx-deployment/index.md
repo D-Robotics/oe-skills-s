@@ -16,7 +16,7 @@ Below we share an approach that uses hierarchical planning followed by phased ex
 output
 Understood. Please tell me your task description, and I will break it down into 3–5 high‑level stages and record the key rules.
 
-"I want to quantize and deploy an ONNX classification model on Horizon RDK S100, write deployment code, cross‑compile it in a container, push it to the development board {BOARD_IP}, and test whether the classification results align with the floating‑point model.
+"I want to quantize and deploy an ONNX classification model on D Robotics RDK S100, write deployment code, cross‑compile it in a container, push it to the development board {BOARD_IP}, and test whether the classification results align with the floating‑point model.
 The docker container for testing is ****.
 The working directory is /open_explorer/work_dir/. Do not read any files outside this directory.
 The model path in the container is: /open_explorer/work_dir/models/resnet50.onnx.
@@ -42,7 +42,7 @@ Next, break down the sub‑plan for each stage. Each step in the sub‑plan shou
 
 1. Model Parsing and PTQ Quantization
 
-For this stage, it is recommended to directly guide the agent to refer to `j6-hmct-cosine-similarity-tuning` to design the plan (without using other tools for unnecessary attempts), focusing primarily on accuracy tuning. The execution flow of this skill can be referenced from the flowchart below:
+For this stage, it is recommended to directly guide the agent to refer to `s-hmct-cosine-similarity-tuning` to design the plan (without using other tools for unnecessary attempts), focusing primarily on accuracy tuning. The execution flow of this skill can be referenced from the flowchart below:
 
 ![](images/diagram.png)
 
@@ -60,21 +60,21 @@ For this stage, it is recommended to directly guide the agent to refer to `j6-hm
 
 2. Model Compilation and Fixed‑point Accuracy Verification
 
-Model Compilation: If the agent deviates by using tools such as `hb_compile` based on user manuals or historical information, guide it to revise the plan and use `j6-hbdk-compile` to compile the previous output `ptq_model.onnx`.
+Model Compilation: If the agent deviates by using tools such as `hb_compile` based on user manuals or historical information, guide it to revise the plan and use `s-hbdk-compile` to compile the previous output `ptq_model.onnx`.
 
-Fixed‑point Accuracy Verification: If you do not have a directly connected development board, guide the agent to instead use `quantized.bc` (which has the same binary output as HBM) to run a few key cases for visualization. If a development board is available, the agent will invoke `j6-ucp-hbm-infer` to write hbm\_infer code or use the `hb_verifier` tool for consistency verification.
+Fixed‑point Accuracy Verification: If you do not have a directly connected development board, guide the agent to instead use `quantized.bc` (which has the same binary output as HBM) to run a few key cases for visualization. If a development board is available, the agent will invoke `s-ucp-hbm-infer` to write hbm\_infer code or use the `hb_verifier` tool for consistency verification.
 
 > Please note that if the development board is unreachable, do not let the agent use hbm\_infer to run HBM inference locally, as it will be extremely slow.
 
 3. On‑board Deployment Code Writing and Cross‑compilation
 
-This process primarily refers to the `j6-ucp-infer-generating` skill. Normally, the agent will proactively help design a smoke test to compare the deployment code with the Python‑side consistency. If not, guide it to supplement this step.
+This process primarily refers to the `s-ucp-infer-generating` skill. Normally, the agent will proactively help design a smoke test to compare the deployment code with the Python‑side consistency. If not, guide it to supplement this step.
 
 If no development board is available, guide the agent to use `quantized.bc` to compile an executable program on the X86 side for verifying the correctness of the UCP code.
 
 ## Phased Execution
 
-> If you notice that the agent spends a long time debugging during use, you can prompt it to use Horizon‑provided skills to improve efficiency. Example dialogue: It is recommended to check the skills under .horizon.
+> If you notice that the agent spends a long time debugging during use, you can prompt it to use D Robotics‑provided skills to improve efficiency. Example dialogue: It is recommended to check the skills under .horizon.
 
 Based on the detailed plans above, the agent completed quantization tuning, model compilation, on‑board code writing, and consistency verification in about 10 minutes.
 
