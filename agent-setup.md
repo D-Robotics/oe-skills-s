@@ -67,38 +67,11 @@ test -f "$PROJECT_ROOT/.drobotics-s/skills/drobotics-router/SKILL.md"
 3. 当任务属于 D Robotics 范畴但尚未明确落到某个具体 skill 时，先走 `.drobotics-s/skills/drobotics-router/SKILL.md` 做顶层路由
 4. 再由 drobotics-router 顶层 skill 分流到具体的子 skill
 
-## 7. 配置 oe-mcp（按需）
+## 7. 官方 RDK 文档 MCP
 
-`oe-mcp` 是 OpenExplorer 提供的 MCP 文档检索服务。当本地 skill 内容不足以回答时，agent 应使用 oe-mcp 补充检索。
+回答 OE S 工具链行为、命令、参数、API、配置或版本问题时，Agent 环境必须提供 RDK 文档 MCP：使用 `mcp__rdk_docs__search_docs`（`manual=oe-s`、`source=docs`）检索，并用 `mcp__rdk_docs__get_page` 阅读官方页面。每次任务都要检索，不能因本地 Skill 或参考文档已有相同说法而跳过。
 
-### Claude Code
-
-```bash
-claude mcp add --transport http oe-mcp https://mcp.oe.horizon.auto/mcp
-```
-
-### Codex
-
-```bash
-codex mcp add oe-mcp --url https://mcp.oe.horizon.auto/mcp
-```
-
-### Cursor
-
-编辑 `~/.cursor/mcp.json`，在已有配置中新增：
-
-```json
-{
-  "mcpServers": {
-    "oe-mcp": {
-      "type": "http",
-      "url": "https://mcp.oe.horizon.auto/mcp"
-    }
-  }
-}
-```
-
-如果已有其他 MCP 配置，只合并 `oe-mcp` 这一段，不要覆盖现有内容。
+此仓库不安装或配置 MCP。连接方式由 Agent 宿主环境负责；如果工具不可用、没有命中相关页面或证据不足，报告阻塞，不要用旧服务地址、本地文档或模型记忆替代。
 
 ## 8. 常见问题
 

@@ -6,7 +6,7 @@ A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenario
 
 The OE Docker image tag must match the installed OE package version; for example, OE 3.7.0 uses the `v3.7.0` image tag.
 
-> Current development version: `v1.1.0`.
+> Current development version: `v1.1.1`.
 
 # Features
 
@@ -33,48 +33,11 @@ The OE Docker image tag must match the installed OE package version; for example
 Install this skill: https://github.com/D-Robotics/oe-skills-s
 ```
 
-### Configure MCP&#x20;
+### Official documentation MCP
 
-> The previous step is assumed to be already installed by default. It is recommended that users verify whether the MCP service is available after installation is complete. The following shows how to manually configure MCP:
+Questions about OpenExplorer S-series behavior, commands, parameters, APIs, configuration, or versions must use the RDK documentation MCP provided by the current Agent environment: call `mcp__rdk_docs__search_docs` with `manual=oe-s` and `source=docs`, then read the matching page with `mcp__rdk_docs__get_page`.
 
-<table><colgroup><col width="120"><col width="680"></colgroup>
-<thead>
-<tr>
-<th></th>
-<th>Command</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>General</td>
-<td>Tell your Agent: help me configure <strong>the following MCP service</strong><pre><code class="language-python">"oe-mcp": {
-  "type": "http",
-  "url": "https://mcp.oe.horizon.auto/mcp"
-}
-</code></pre></td>
-</tr>
-<tr>
-<td>codex</td>
-<td>codex mcp add oe-mcp --url https://mcp.oe.horizon.auto/mcp</td>
-</tr>
-<tr>
-<td>Claude code</td>
-<td><code>claude mcp add --transport http oe-mcp https://mcp.oe.horizon.auto/mcp</code></td>
-</tr>
-<tr>
-<td>cursor</td>
-<td>Press <code>command+shift+p</code>, open MCP settings, click New MCP Server, add the following config to the JSON and save:<pre><code class="language-json">{
-  "mcpServers": {
-    "oe-mcp": {
-      "type": "http",
-      "url": "https://mcp.oe.horizon.auto/mcp"
-    }
-  }
-}
-</code></pre></td>
-</tr>
-</tbody>
-</table>
+This repository does not provide or configure an MCP service. If those tools are unavailable or the official pages do not provide sufficient evidence, the Skill must report a blocker and must not use bundled local documents as a substitute.
 
 ## Usage
 
@@ -243,7 +206,7 @@ OE-Skills/
 | llmcompression-add-model     | Adding new model support to llm\_compression | Integrating new LLM/VLM models into `llm_compression/models/`                                                  |
 | llmcompression-operations    | llm\_compression daily operations   | Calibration, GPU accuracy evaluation (torch\_eval), HBM compilation, on‑board evaluation (hbm\_rpc\_eval), quantization analysis (quant\_analysis) |
 
-> Full‑pipeline deployment specifications take precedence: When a request involves the complete chain of "quantization → compilation → deployment", the full‑pipeline specifications in `drobotics-router/references/deployment-workflow.md` are the highest authority. If any sub‑skill's default behavior conflicts with the full‑pipeline specifications (e.g., `calibration_type`, `all_node_type`, `remove_node_type`, or deployment deliverable formats), the full‑pipeline specifications shall prevail.
+> The full-pipeline workflow checklist keeps project steps consistent. Verify calibration options, quantization precision, CLI, APIs, configuration fields, platform mappings, and version behavior through the current RDK documentation MCP; its official pages take precedence over local Skills and references.
 
 # Disclaimer
 

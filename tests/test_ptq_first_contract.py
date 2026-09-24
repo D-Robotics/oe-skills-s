@@ -22,13 +22,14 @@ class PTQFirstInstallContractTests(unittest.TestCase):
             )
 
             workspace = project / ".drobotics-s"
+            self.assertTrue((workspace / "scripts" / "probe_environment.py").is_file())
             router = (workspace / "skills/drobotics-router/SKILL.md").read_text(encoding="utf-8")
             decision = router.split("### 量化路径判定门禁", 1)[1].split(
                 "### ⛔ 路由后强制读取门禁", 1
             )[0]
 
-            self.assertIn("普通浮点 Caffe / ONNX", decision)
-            self.assertIn("默认 PTQ", decision)
+            self.assertIn("浮点模型", decision)
+            self.assertIn("常规请求先评估 PTQ", decision)
             self.assertIn("`.pt` / `.pth`", decision)
             self.assertIn("导出 ONNX", decision)
             self.assertIn("PTQ", decision)
@@ -54,11 +55,12 @@ class PTQFirstInstallContractTests(unittest.TestCase):
 
             package_detection = (workspace / "skills/drobotics-router/oe-package-detection/SKILL.md").read_text(encoding="utf-8")
             deployment = (workspace / "skills/drobotics-router/references/deployment-workflow.md").read_text(encoding="utf-8")
-            self.assertIn("默认 `EXECUTION_MODE=docker`", package_detection)
-            self.assertIn("OE_VERSION=3.7.0", package_detection)
-            self.assertIn('OE_VERSION_TAG="${OE_VERSION#v}"', package_detection)
-            self.assertIn("ai_toolchain_ubuntu_22_s100_s600_cpu:v3.7.0", package_detection)
-            self.assertIn('OE_VERSION_TAG="${OE_VERSION#v}"', deployment)
+            self.assertIn("probe_environment.py", package_detection)
+            self.assertIn("默认使用 Docker 缓存镜像", package_detection)
+            self.assertIn("不要求本机 OE 包", package_detection)
+            self.assertIn("普通 PTQ 和常规 OE CLI 任务默认走 Docker", router)
+            self.assertNotIn("OE_VERSION=3.7.0", package_detection)
+            self.assertNotIn("ai_toolchain_ubuntu_22_s100_s600_cpu:v3.7.0", package_detection)
             self.assertNotIn("torch.cuda.is_available() = True", package_detection + deployment)
 
 

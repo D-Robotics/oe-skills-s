@@ -6,7 +6,7 @@
 >
 > OE Docker 镜像的版本标签应与已安装的 OE package 版本一致，例如 OE 3.7.0 使用 `v3.7.0` 镜像标签。
 
-> 当前开发版本：`v1.1.0`。
+> 当前开发版本：`v1.1.1`。
 
 # 功能介绍
 
@@ -37,48 +37,11 @@
 
 
 
-### 手动配置mcp
+### 官方文档 MCP
 
-> 前一步默认已安装，建议用户安装完成后确认一下mcp服务是否可用。如下为手动配置mcp的方式：
+涉及 OpenExplorer S 系列工具行为、命令、参数、API、配置或版本的问题，必须由当前 Agent 环境提供的 RDK 文档 MCP 检索官方资料：先调用 `mcp__rdk_docs__search_docs`（`manual=oe-s`、`source=docs`），再用 `mcp__rdk_docs__get_page` 阅读命中页面。
 
-<table><colgroup><col width="100"><col width="720"></colgroup>
-<thead>
-<tr>
-<th></th>
-<th>命令</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>通用</td>
-<td>直接对你的Agent说：帮我配置<strong>如下mcp服务</strong><pre><code class="language-python">"oe-mcp": {
-  "type": "http",
-  "url": "https://mcp.oe.horizon.auto/mcp"
-}
-</code></pre></td>
-</tr>
-<tr>
-<td>codex</td>
-<td>codex mcp add oe-mcp --url https://mcp.oe.horizon.auto/mcp</td>
-</tr>
-<tr>
-<td>Claude code</td>
-<td><code>claude mcp add --transport http oe-mcp https://mcp.oe.horizon.auto/mcp</code></td>
-</tr>
-<tr>
-<td>cursor</td>
-<td><code>command+shift+p</code>，打开mcp设置，点击New MCP Server，在json中增加相关配置保存即可：<pre><code class="language-json">{
-  "mcpServers": {
-    "oe-mcp": {
-      "type": "http",
-      "url": "https://mcp.oe.horizon.auto/mcp"
-    }
-  }
-}
-</code></pre></td>
-</tr>
-</tbody>
-</table>
+此仓库不提供或配置 MCP 服务。若当前 Agent 环境没有这些工具，或官方页面没有足够证据，Skill 应报告阻塞，不得用打包的本地文档代替官方资料。
 
 
 
@@ -198,7 +161,7 @@ OE-Skills/
 | llmcompression-add-model     | llm\_compression 新增模型支持 | 在`llm_compression/models/` 接入新 LLM/VLM 模型                                                  |
 | llmcompression-operations    | llm\_compression 日常操作   | 校准(calib)、GPU 精度评测(torch\_eval)、HBM 编译(compile)、板端评测(hbm\_rpc\_eval)、量化分析(quant\_analysis) |
 
-> 全链路部署规范优先：当需求涉及「量化 → 编译 → 部署」完整链路时，`drobotics-router/references/deployment-workflow.md` 中的全链路规范是最高权威。若子 Skill 默认行为与全链路规范冲突（如 `calibration_type`、`all_node_type`、`remove_node_type`、部署交付物形式），以全链路规范为准。
+> 全链路流程清单用于保持项目内端到端步骤一致。具体校准选项、量化精度、CLI、API、配置字段、芯片映射和版本行为必须通过当前 RDK 文档 MCP 页面核实；官方页面优先于本地 Skill 与参考资料。
 
 
 
