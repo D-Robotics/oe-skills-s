@@ -4,7 +4,7 @@
 
 > 面向 D Robotics OpenExplorer（OE）工具链场景的 Agent Skills 集合。围绕 PTQ/QAT 量化、HBDK 编译、UCP 板端推理、性能与精度评估等核心环节，将路径知识、阶段依赖和验证流程模块化，支持 Agent 按流程完成从浮点模型到板端部署的端到端优化。
 
-> 当前发布版本：`v1.0.0`。
+> 当前发布版本：`v1.0.1`。
 
 # 功能介绍
 
@@ -30,7 +30,7 @@
 
 ```python
 # 直接对你的Agent说
-安装这个skill：https://github.com/HorizonRobotics/OE-Skills/blob/main/agent-setup.md
+安装这个skill：https://github.com/D-Robotics/oe-skills-s
 ```
 
 
@@ -103,7 +103,6 @@
 OE-Skills/
 ├── README.md                # 本文件
 ├── README.en.md             # English README
-├── agent-setup.md           # Agent 安装指引文档
 ├── setup.sh                 # 安装脚本，将 horizon/ 资源铺设到目标项目 .horizon/
 ├── docs/                    # 部署全流程示例文档
 │   ├── zh/                  # 中文文档

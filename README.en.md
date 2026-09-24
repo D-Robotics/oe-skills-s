@@ -4,7 +4,7 @@
 
 A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenarios. Centered around core steps such as PTQ/QAT quantization, HBDK compilation, UCP on-board inference, performance and accuracy evaluation, this manual modularizes path knowledge, stage dependencies, and verification processes, enabling Agents to complete end-to-end optimization from floating-point models to on-board deployment in a streamlined workflow.
 
-> Current release: `v1.0.0`.
+> Current release: `v1.0.1`.
 
 # Features
 
@@ -28,7 +28,7 @@ A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenario
 
 ```python
 #tell your Agent:
-Install this skill: https://github.com/HorizonRobotics/OE-Skills/blob/main/agent-setup.md
+Install this skill: https://github.com/D-Robotics/oe-skills-s
 ```
 
 ### Configure MCP&#x20;
@@ -143,7 +143,6 @@ Install this skill: https://github.com/HorizonRobotics/OE-Skills/blob/main/agent
 OE-Skills/
 ├── README.md                # Chinese README
 ├── README.en.md             # This file
-├── agent-setup.md           # Agent installation guide
 ├── setup.sh                 # Installation script, deploys horizon/ resources to target project .horizon/
 ├── docs/                    # Deployment full-process example documents
 │   ├── zh/                  # Chinese docs

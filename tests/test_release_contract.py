@@ -94,11 +94,11 @@ class ReleaseContractTests(unittest.TestCase):
             header = frontmatter(path.read_text(encoding="utf-8"), path)
             self.assertRegex(header, r"(?m)^name:\s*[^\s].*$", path)
             self.assertRegex(header, r"(?m)^description:\s*[^\s].*$", path)
-            self.assertRegex(header, r"(?m)^version:\s*1\.0\.0\s*$", path)
+            self.assertRegex(header, r"(?m)^version:\s*1\.0\.1\s*$", path)
             self.assertRegex(header, r"(?m)^license:\s*Apache-2\.0\s*$", path)
 
     def test_source_version_is_v1_release(self):
-        self.assertEqual((ROOT / "horizon" / "VERSION").read_text(encoding="utf-8").strip(), "1.0.0")
+        self.assertEqual((ROOT / "horizon" / "VERSION").read_text(encoding="utf-8").strip(), "1.0.1")
 
     def test_skill_index_versions_match_indexed_skill_frontmatter(self):
         index = json.loads((ROOT / "horizon" / "skill-index.json").read_text(encoding="utf-8"))
@@ -120,7 +120,7 @@ class ReleaseContractTests(unittest.TestCase):
             version = re.search(r"(?m)^version:\s*(\S+)\s*$", header)
             self.assertIsNotNone(version, name)
             self.assertEqual(entry["version"], version.group(1), name)
-            self.assertEqual(entry["version"], "1.0.0", name)
+            self.assertEqual(entry["version"], "1.0.1", name)
 
     def test_setup_records_the_requested_release_ref(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as temporary_directory:
@@ -129,7 +129,7 @@ class ReleaseContractTests(unittest.TestCase):
             (project / "AGENTS.md").write_text("# Project rules\n", encoding="utf-8")
 
             result = subprocess.run(
-                ["bash", "setup.sh", "--ref", "v1.0.0", shell_path(project)],
+                ["bash", "setup.sh", "--ref", "v1.0.1", shell_path(project)],
                 cwd=ROOT,
                 check=True,
                 text=True,
@@ -138,8 +138,8 @@ class ReleaseContractTests(unittest.TestCase):
                 capture_output=True,
             )
 
-            self.assertEqual((project / ".horizon" / "VERSION").read_text(encoding="utf-8").strip(), "1.0.0")
-            self.assertEqual((project / ".horizon" / "INSTALLED_REF").read_text(encoding="utf-8").strip(), "v1.0.0")
+            self.assertEqual((project / ".horizon" / "VERSION").read_text(encoding="utf-8").strip(), "1.0.1")
+            self.assertEqual((project / ".horizon" / "INSTALLED_REF").read_text(encoding="utf-8").strip(), "v1.0.1")
             self.assertNotIn("No such file", result.stderr)
 
     def test_setup_update_treats_a_crlf_version_as_current(self):
@@ -154,7 +154,7 @@ class ReleaseContractTests(unittest.TestCase):
                 check=True,
             )
             destination = project / ".horizon"
-            (destination / "VERSION").write_bytes(b"1.0.0\r\n")
+            (destination / "VERSION").write_bytes(b"1.0.1\r\n")
             retained = destination / "retained-on-noop"
             retained.write_text("keep", encoding="utf-8")
 
@@ -168,7 +168,7 @@ class ReleaseContractTests(unittest.TestCase):
                 capture_output=True,
             )
 
-            self.assertIn("Already up to date (1.0.0)", result.stdout)
+            self.assertIn("Already up to date (1.0.1)", result.stdout)
             self.assertTrue(retained.exists())
 
     def test_release_or_recovery_dispatch_notifies_hub_with_api_verified_payload(self):

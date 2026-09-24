@@ -1,7 +1,7 @@
 ---
 name: s-plugin-adaptation
 description: 为用户的浮点 PyTorch 模型适配地瓜机器人机器人公司的 QAT 工具 `horizon_plugin_pytorch`。这是一个编排型 skill，必须按固定顺序依次调用：`s-plugin-set-march` → `s-plugin-insert-quant-dequant` → `s-plugin-dynamic-block` → `s-plugin-prepare` → `s-plugin-set-fake-quantize`。
-version: 1.0.0
+version: 1.0.1
 license: Apache-2.0
 ---
 

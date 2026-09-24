@@ -9,7 +9,7 @@
 - Skill 索引：`.horizon/skill-index.json`
 - 文档目录：`.horizon/docs/`
 - Skill 目录：`.horizon/skills/`
-- 当前 release 版本：`1.0.0`
+- 当前 release 版本：`1.0.1`
 
 ## 2. 使用规则
 
@@ -46,48 +46,48 @@
 
 ## 6. 内置 Skills
 
-- `drobotics-router@1.0.0` -> `.horizon/skills/drobotics-router/SKILL.md`: D Robotics 顶层路由 skill，用于在具体 skill 之间做渐进式任务分流。
+- `drobotics-router@1.0.1` -> `.horizon/skills/drobotics-router/SKILL.md`: D Robotics 顶层路由 skill，用于在具体 skill 之间做渐进式任务分流。
 
 ### OE 包环境
 
-- `oe-package-detection@1.0.0` -> `.horizon/skills/drobotics-router/oe-package-detection/SKILL.md`
-- `oe-package-install@1.0.0` -> `.horizon/skills/drobotics-router/oe-package-install/SKILL.md`
-- `board-detection@1.0.0` -> `.horizon/skills/drobotics-router/board-detection/SKILL.md`
+- `oe-package-detection@1.0.1` -> `.horizon/skills/drobotics-router/oe-package-detection/SKILL.md`
+- `oe-package-install@1.0.1` -> `.horizon/skills/drobotics-router/oe-package-install/SKILL.md`
+- `board-detection@1.0.1` -> `.horizon/skills/drobotics-router/board-detection/SKILL.md`
 
 ### OE-LLM 包环境
 
-- `oe-llm-package-detection@1.0.0` -> `.horizon/skills/drobotics-router/oe-llm-package-detection/SKILL.md`
-- `oe-llm-package-install@1.0.0` -> `.horizon/skills/drobotics-router/oe-llm-package-install/SKILL.md`
+- `oe-llm-package-detection@1.0.1` -> `.horizon/skills/drobotics-router/oe-llm-package-detection/SKILL.md`
+- `oe-llm-package-install@1.0.1` -> `.horizon/skills/drobotics-router/oe-llm-package-install/SKILL.md`
 
 ### HBDK (hbdk)
 
-- `s-hbdk-compile@1.0.0` -> `.horizon/skills/hbdk/s-hbdk-compile/SKILL.md`
-- `hbdk-manual@1.0.0` -> `.horizon/skills/hbdk/hbdk-manual/SKILL.md`
+- `s-hbdk-compile@1.0.1` -> `.horizon/skills/hbdk/s-hbdk-compile/SKILL.md`
+- `hbdk-manual@1.0.1` -> `.horizon/skills/hbdk/hbdk-manual/SKILL.md`
 
 ### D Robotics Plugin (plugin)
 
-- `s-plugin-adaptation@1.0.0` -> `.horizon/skills/plugin/s-plugin-adaptation/SKILL.md`
-- `s-plugin-export@1.0.0` -> `.horizon/skills/plugin/s-plugin-export/SKILL.md`
-- `s-plugin-model-check-result@1.0.0` -> `.horizon/skills/plugin/s-plugin-model-check-result/SKILL.md`
-- `s-plugin-graph-diff@1.0.0` -> `.horizon/skills/plugin/s-plugin-graph-diff/SKILL.md`
-- `s-plugin-hbdk-generating@1.0.0` -> `.horizon/skills/plugin/s-plugin-hbdk-generating/SKILL.md`
-- `s-plugin-consistency-debug@1.0.0` -> `.horizon/skills/plugin/s-plugin-consistency-debug/SKILL.md`
-- `s-plugin-precision-tuning@1.0.0` -> `.horizon/skills/plugin/s-plugin-precision-tuning/SKILL.md`
+- `s-plugin-adaptation@1.0.1` -> `.horizon/skills/plugin/s-plugin-adaptation/SKILL.md`
+- `s-plugin-export@1.0.1` -> `.horizon/skills/plugin/s-plugin-export/SKILL.md`
+- `s-plugin-model-check-result@1.0.1` -> `.horizon/skills/plugin/s-plugin-model-check-result/SKILL.md`
+- `s-plugin-graph-diff@1.0.1` -> `.horizon/skills/plugin/s-plugin-graph-diff/SKILL.md`
+- `s-plugin-hbdk-generating@1.0.1` -> `.horizon/skills/plugin/s-plugin-hbdk-generating/SKILL.md`
+- `s-plugin-consistency-debug@1.0.1` -> `.horizon/skills/plugin/s-plugin-consistency-debug/SKILL.md`
+- `s-plugin-precision-tuning@1.0.1` -> `.horizon/skills/plugin/s-plugin-precision-tuning/SKILL.md`
 
 ### HMCT / Quantization (hmct)
 
-- `hmct-workflow@1.0.0` -> `.horizon/skills/hmct/SKILL.md`
+- `hmct-workflow@1.0.1` -> `.horizon/skills/hmct/SKILL.md`
 
 ### UCP / Runtime (ucp)
 
-- `s-ucp-infer-generating@1.0.0` -> `.horizon/skills/ucp/s-ucp-infer-generating/SKILL.md`
-- `s-ucp-hbm-infer@1.0.0` -> `.horizon/skills/ucp/s-ucp-hbm-infer/SKILL.md`
-- `s-ucp-model-perf-eval@1.0.0` -> `.horizon/skills/ucp/s-ucp-model-perf-eval/SKILL.md`
-- `s-ucp-perfetto-trace-analysis@1.0.0` -> `.horizon/skills/ucp/s-ucp-perfetto-trace-analysis/SKILL.md`
-- `s-ucp-perfetto-trace-catcher@1.0.0` -> `.horizon/skills/ucp/s-ucp-perfetto-trace-catcher/SKILL.md`
-- `s-board-monitor@1.0.0` -> `.horizon/skills/ucp/s-board-monitor/SKILL.md`
+- `s-ucp-infer-generating@1.0.1` -> `.horizon/skills/ucp/s-ucp-infer-generating/SKILL.md`
+- `s-ucp-hbm-infer@1.0.1` -> `.horizon/skills/ucp/s-ucp-hbm-infer/SKILL.md`
+- `s-ucp-model-perf-eval@1.0.1` -> `.horizon/skills/ucp/s-ucp-model-perf-eval/SKILL.md`
+- `s-ucp-perfetto-trace-analysis@1.0.1` -> `.horizon/skills/ucp/s-ucp-perfetto-trace-analysis/SKILL.md`
+- `s-ucp-perfetto-trace-catcher@1.0.1` -> `.horizon/skills/ucp/s-ucp-perfetto-trace-catcher/SKILL.md`
+- `s-board-monitor@1.0.1` -> `.horizon/skills/ucp/s-board-monitor/SKILL.md`
 
 ### D Robotics TC UI / Analyzer (horizon_tc_ui)
 
-- `hb-analyzer-performance@1.0.0` -> `.horizon/skills/horizon_tc_ui/hb-analyzer-performance/SKILL.md`
-- `horizon-tc-ui@1.0.0` -> `.horizon/skills/horizon_tc_ui/horizon-tc-ui/SKILL.md`
+- `hb-analyzer-performance@1.0.1` -> `.horizon/skills/horizon_tc_ui/hb-analyzer-performance/SKILL.md`
+- `horizon-tc-ui@1.0.1` -> `.horizon/skills/horizon_tc_ui/horizon-tc-ui/SKILL.md`

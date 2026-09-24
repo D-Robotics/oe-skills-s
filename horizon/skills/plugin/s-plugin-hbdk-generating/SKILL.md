@@ -1,7 +1,7 @@
 ---
 name: s-plugin-hbdk-generating
 description: 为基础网络结构生成从量化到编译的完整流程代码（set_march → Quant/DeQuant → 量化配置 → prepare → 校准 → QAT → export → convert → remove_io_op → statistics → compile HBM）。当用户需要同时覆盖量化和编译多个步骤时触发，如"帮我写量化编译全流程代码"、"Conv+BN+ReLU 量化部署"、"地瓜机器人量化编译"、"基础结构量化到 HBM"。即使用户没有明确说"全流程"，只要涉及从量化到编译的多个步骤都应触发。如果用户只需要量化或只需要编译，应路由到对应子 skill。关键词："量化编译"、"量化部署"、"全流程"、"set_march 到 HBM"、"地瓜机器人量化"、"D Robotics 量化编译"、"基础结构量化"、"QAT 量化编译"。
-version: 1.0.0
+version: 1.0.1
 license: Apache-2.0
 ---
 
