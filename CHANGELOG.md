@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0] - Unreleased
+## [1.1.0] - 2026-09-24
 
 - Route ordinary floating-point deployment through PTQ first, including PyTorch-to-ONNX evaluation.
 - Align OE environment guidance with the current S-series package and version-matched Docker images.
