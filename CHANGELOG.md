@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2] - 2026-09-24
+
+- Make the package-detection trigger consistent with the default cached-Docker PTQ workflow.
+- Clarify that package-internal assets do not imply host-local tool execution.
+- Remove bundled OE code snapshots that could be mistaken for current or official documentation.
+- Align release metadata and the TC UI display module key with D Robotics naming while preserving external package identifiers.
+
 ## [1.1.1] - 2026-09-24
 
 - Retrieve current S OpenExplorer facts through the official RDK documentation MCP; local notes remain workflow aids.

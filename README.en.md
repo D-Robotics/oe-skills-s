@@ -4,9 +4,9 @@
 
 A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenarios. Floating-point deployment defaults to PTQ; PyTorch and similar models can be exported to supported ONNX first. QAT is considered when explicitly requested or when PTQ still misses the target after support checks and tuning. The skills also cover HBDK compilation, UCP on-board inference, performance, and accuracy evaluation.
 
-The OE Docker image tag must match the installed OE package version; for example, OE 3.7.0 uses the `v3.7.0` image tag.
+Standard PTQ first probes supported S100/S600 Docker images already cached locally. It does not require an extracted OE package or `OE_DIR`, and it does not pull images automatically. When a specific OE version must be matched, provide that version and use the image selected by the probe.
 
-> Current development version: `v1.1.1`.
+> Current development version: `v1.1.2`.
 
 # Features
 
@@ -14,7 +14,7 @@ The OE Docker image tag must match the installed OE package version; for example
 
 * End-to-End Deployment Pipeline: Covers the complete chain of "quantization → compilation → on-board inference → performance/accuracy evaluation". Full-pipeline deployment specifications take precedence over the default behavior of individual skills.
 
-* Environment and Board Detection: Automatically detects development board model, OE package version, local Python/CUDA/PyTorch compatibility, and creates a venv with required installations as needed.
+* Environment and Board Detection: Probes cached Docker images and basic tools by default. It checks a host OE package and Python/CUDA/PyTorch environment only when local host execution is explicitly selected or package-internal assets are required.
 
 * Accuracy Tuning: standard PTQ first; QAT adaptation and export when requested or when PTQ is unsuitable, plus mixed-precision tuning, training-deployment consistency debugging, and cosine similarity analysis.
 
@@ -120,7 +120,7 @@ OE-Skills/
 │   ├── DROBOTICS-S.md           # Workspace rules and usage instructions
 │   ├── VERSION              # Current version number
 │   ├── skill-index.json     # Skill index (module, path, description, trigger conditions)
-│   ├── docs/                # D Robotics toolchain offline documentation
+│   ├── docs/                # Official documentation MCP guidance (no local OE code snapshots)
 │   └── skills/              # Skill collections organized by module
 │       ├── drobotics-router/  # Top-level routing skill
 │       ├── hbdk/            # HBDK compilation related
@@ -135,14 +135,14 @@ OE-Skills/
 
 ### Top-level Routing Skills
 
-`drobotics-router` is the toolchain entry point, handling PTQ/QAT quantization, compilation, on‑board deployment, performance and accuracy evaluation requests, and routing them to corresponding sub‑skills. Environmental detection skills are invoked on‑demand when on‑board tasks or toolchain operations are triggered.
+`drobotics-router` is the toolchain entry point, handling PTQ/QAT quantization, compilation, on‑board deployment, performance and accuracy evaluation requests, and routing them to corresponding sub‑skills. Board detection is invoked when an on-board task needs it; OE package detection is used only for explicitly selected host-local execution or tasks that need package-internal assets.
 
 
 | Skill                    | Function           | Trigger Conditions                                   |
 | ------------------------ | ------------ | -------------------------------------- |
 | drobotics-router           | Top-level routing entry       | Any D Robotics toolchain‑related request dispatching                  |
 | board-detection          | Board hardware platform detection     | On‑board execution/inference/stress test and `.env.board` missing             |
-| oe-package-detection     | OE package environment detection     | Normal PTQ/QAT quantization/compilation/deployment and `.env.oe-package` missing |
+| oe-package-detection     | OE package environment detection     | Explicit host-local execution or a task that needs package-internal assets; default PTQ Docker probing requires neither `.env.oe-package` nor `OE_DIR` |
 | oe-package-install       | Local OE package installation     | Triggered after `oe-package-detection` completes as needed         |
 | oe-llm-package-detection | OE‑LLM package environment detection | Tasks that depend on OE‑LLM package (e.g., LightCompress)          |
 | oe-llm-package-install   | Local OE‑LLM package installation | Triggered after `oe-llm-package-detection` completes as needed     |

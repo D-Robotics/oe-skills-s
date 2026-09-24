@@ -88,17 +88,21 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_every_s_skill_has_v1_release_frontmatter(self):
         skill_paths = sorted(SKILLS_ROOT.rglob("SKILL.md"))
-        self.assertTrue(skill_paths, "expected packaged S skills")
+        self.assertEqual(len(skill_paths), 33, "expected 33 packaged S skills")
 
         for path in skill_paths:
             header = frontmatter(path.read_text(encoding="utf-8"), path)
             self.assertRegex(header, r"(?m)^name:\s*[^\s].*$", path)
             self.assertRegex(header, r"(?m)^description:\s*[^\s].*$", path)
-            self.assertRegex(header, r"(?m)^version:\s*1\.1\.1\s*$", path)
+            self.assertRegex(header, r"(?m)^version:\s*1\.1\.2\s*$", path)
             self.assertRegex(header, r"(?m)^license:\s*Apache-2\.0\s*$", path)
 
     def test_source_version_is_v1_release(self):
-        self.assertEqual((ROOT / "drobotics-s" / "VERSION").read_text(encoding="utf-8").strip(), "1.1.1")
+        self.assertEqual((ROOT / "drobotics-s" / "VERSION").read_text(encoding="utf-8").strip(), "1.1.2")
+        for relative_path in ("README.md", "README.en.md", "CHANGELOG.md"):
+            with self.subTest(path=relative_path):
+                content = (ROOT / relative_path).read_text(encoding="utf-8")
+                self.assertIn("1.1.2", content)
 
     def test_skill_index_versions_match_indexed_skill_frontmatter(self):
         index = json.loads((ROOT / "drobotics-s" / "skill-index.json").read_text(encoding="utf-8"))
@@ -120,7 +124,12 @@ class ReleaseContractTests(unittest.TestCase):
             version = re.search(r"(?m)^version:\s*(\S+)\s*$", header)
             self.assertIsNotNone(version, name)
             self.assertEqual(entry["version"], version.group(1), name)
-            self.assertEqual(entry["version"], "1.1.1", name)
+            self.assertEqual(entry["version"], "1.1.2", name)
+
+    def test_all_skill_index_entries_have_the_release_version(self):
+        index = json.loads((ROOT / "drobotics-s" / "skill-index.json").read_text(encoding="utf-8"))
+        self.assertTrue(index["paths"])
+        self.assertTrue(all(entry["version"] == "1.1.2" for entry in index["paths"].values()))
 
     def test_setup_records_the_requested_release_ref(self):
         with tempfile.TemporaryDirectory(dir=ROOT) as temporary_directory:
@@ -129,7 +138,7 @@ class ReleaseContractTests(unittest.TestCase):
             (project / "AGENTS.md").write_text("# Project rules\n", encoding="utf-8")
 
             result = subprocess.run(
-                ["bash", "setup.sh", "--ref", "v1.1.1", shell_path(project)],
+                ["bash", "setup.sh", "--ref", "v1.1.2", shell_path(project)],
                 cwd=ROOT,
                 check=True,
                 text=True,
@@ -138,8 +147,8 @@ class ReleaseContractTests(unittest.TestCase):
                 capture_output=True,
             )
 
-            self.assertEqual((project / ".drobotics-s" / "VERSION").read_text(encoding="utf-8").strip(), "1.1.1")
-            self.assertEqual((project / ".drobotics-s" / "INSTALLED_REF").read_text(encoding="utf-8").strip(), "v1.1.1")
+            self.assertEqual((project / ".drobotics-s" / "VERSION").read_text(encoding="utf-8").strip(), "1.1.2")
+            self.assertEqual((project / ".drobotics-s" / "INSTALLED_REF").read_text(encoding="utf-8").strip(), "v1.1.2")
             self.assertNotIn("No such file", result.stderr)
 
     def test_setup_update_treats_a_crlf_version_as_current(self):
@@ -154,7 +163,7 @@ class ReleaseContractTests(unittest.TestCase):
                 check=True,
             )
             destination = project / ".drobotics-s"
-            (destination / "VERSION").write_bytes(b"1.1.1\r\n")
+            (destination / "VERSION").write_bytes(b"1.1.2\r\n")
             retained = destination / "retained-on-noop"
             retained.write_text("keep", encoding="utf-8")
 
@@ -168,7 +177,7 @@ class ReleaseContractTests(unittest.TestCase):
                 capture_output=True,
             )
 
-            self.assertIn("Already up to date (1.1.1)", result.stdout)
+            self.assertIn("Already up to date (1.1.2)", result.stdout)
             self.assertTrue(retained.exists())
 
     def test_release_or_recovery_dispatch_notifies_hub_with_api_verified_payload(self):

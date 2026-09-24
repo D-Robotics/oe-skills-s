@@ -4,9 +4,9 @@
 
 > 面向 D Robotics OpenExplorer（OE）工具链场景的 Agent Skills 集合。普通浮点模型默认先尝试 PTQ；PyTorch 等模型可先导出为受支持的 ONNX。只有用户明确选择 QAT，或 PTQ 经检查与调优仍无法达到目标时，才评估 QAT。Skills 还覆盖 HBDK 编译、UCP 板端推理、性能与精度评估。
 >
-> OE Docker 镜像的版本标签应与已安装的 OE package 版本一致，例如 OE 3.7.0 使用 `v3.7.0` 镜像标签。
+> 普通 PTQ 默认检查本机已缓存的 S100/S600 Docker 镜像，不要求预装 OE package 或设置 `OE_DIR`，也不会自动拉取镜像。需要与指定 OE 版本匹配时，应提供该版本信息并按探测结果选择镜像。
 
-> 当前开发版本：`v1.1.1`。
+> 当前开发版本：`v1.1.2`。
 
 # 功能介绍
 
@@ -14,7 +14,7 @@
 
 * **端到端部署流程**：覆盖「量化 → 编译 → 板端推理 → 性能/精度评估」完整链路，全链路部署规范优先于单步 Skill 的默认行为
 
-* **环境与板卡检测**：自动探测开发板型号、OE 包版本、本地 Python/CUDA/PyTorch 匹配，按需创建 venv 安装
+* **环境与板卡检测**：默认探测本机缓存 Docker 镜像和工具；仅显式选择宿主机 local 执行或需要 OE 包内资产时，才检测本机 OE 包和 Python/CUDA/PyTorch 环境
 
 * **精度调优**：优先使用标准 PTQ 流程；按明确需求或 PTQ 评测结果使用 QAT 适配与导出、混合精度调优、训练-部署一致性 debug、Cosine Similarity
 
@@ -97,13 +97,13 @@ OE-Skills/
 
 ### 顶层路由 Skills
 
-`drobotics-router` 是工具链入口。普通浮点模型部署优先走 OE 标准 PTQ；PyTorch 等模型先导出为支持的 ONNX。用户明确选择 QAT 或 PTQ 不适用时再走 QAT 插件 Skills。环境检测类 Skill 在板端任务或工具链操作触发时按需调用。
+`drobotics-router` 是工具链入口。普通浮点模型部署优先走 OE 标准 PTQ；PyTorch 等模型先导出为支持的 ONNX。用户明确选择 QAT 或 PTQ 不适用时再走 QAT 插件 Skills。板卡检测按板端任务需要触发；OE 包检测仅在用户明确选择宿主机 local 执行或任务需要包内资产时触发。
 
 | Skill                    | 功能           | 触发场景                                   |
 | ------------------------ | ------------ | -------------------------------------- |
 | drobotics-router           | 顶层路由入口       | 任何 D Robotics 工具链相关请求的分流                  |
 | board-detection          | 板卡硬件平台检测     | 板端运行/推理/压测且`.env.board` 缺失             |
-| oe-package-detection     | OE 包环境检测     | 普通 PTQ/QAT 量化编译部署且`.env.oe-package` 缺失 |
+| oe-package-detection     | OE 包环境检测     | 用户明确选择宿主机 local 执行，或任务需要 OE 包内资产；普通 PTQ 默认 Docker 缓存探测不要求 `.env.oe-package` 或 `OE_DIR` |
 | oe-package-install       | OE 包本地安装     | `oe-package-detection` 完成后按需触发         |
 | oe-llm-package-detection | OE-LLM 包环境检测 | LightCompress 等依赖 OE-LLM 包的任务          |
 | oe-llm-package-install   | OE-LLM 包本地安装 | `oe-llm-package-detection` 完成后按需触发     |

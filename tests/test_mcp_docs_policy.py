@@ -52,13 +52,14 @@ class McpDocsPolicyTests(unittest.TestCase):
         self.assertIn("不是官方事实来源", reference)
         self.assertIn("mcp__rdk_docs__search_docs", reference)
 
-    def test_code_snapshot_index_is_not_an_authoritative_doc_route(self):
+    def test_local_oe_code_snapshots_are_removed_from_the_installable_package(self):
         index = (ROOT / "drobotics-s" / "docs" / "index.md").read_text(encoding="utf-8")
 
         self.assertNotIn("oe-mcp", index)
         self.assertNotIn("search_code", index)
-        self.assertIn("本地代码快照", index)
-        self.assertIn("不能作为官方文档依据", index)
+        self.assertIn("mcp__rdk_docs__search_docs", index)
+        self.assertIn("不包含本地 OE 代码快照", index)
+        self.assertFalse(list((ROOT / "drobotics-s" / "docs").glob("oe_code_chunk*.md")))
 
     def test_onboarding_does_not_configure_the_retired_mcp_endpoint(self):
         for relative_path in ("README.md", "README.en.md", "agent-setup.md"):
@@ -90,6 +91,29 @@ class McpDocsPolicyTests(unittest.TestCase):
             self.assertNotIn("oe-mcp", installed)
             self.assertEqual(installed.count("# D Robotics S Workspace Rules"), 1)
             self.assertIn("# User rules\nKeep these settings.", installed)
+            installed_docs = project / ".drobotics-s" / "docs"
+            self.assertFalse(list(installed_docs.glob("oe_code_chunk*.md")))
+            self.assertTrue((installed_docs / "DROBOTICS-S.md").is_file())
+            self.assertTrue((installed_docs / "index.md").is_file())
+
+    def test_setup_removes_legacy_code_snapshots_from_existing_workspaces(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            project = Path(temporary_directory)
+            old_docs = project / ".drobotics-s" / "docs"
+            old_docs.mkdir(parents=True)
+            stale_snapshot = old_docs / "oe_code_chunk_horizon_tc_ui.md"
+            stale_snapshot.write_text("J6 and Horizon version snapshot", encoding="utf-8")
+
+            subprocess.run(
+                ["bash", str(ROOT / "setup.sh"), str(project)],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertFalse(stale_snapshot.exists())
+            self.assertTrue((old_docs / "index.md").is_file())
 
 
 if __name__ == "__main__":
