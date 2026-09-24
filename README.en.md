@@ -2,9 +2,11 @@
   <a href="README.md">中文</a> | <b>English</b>
 </p>
 
-A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenarios. Centered around core steps such as PTQ/QAT quantization, HBDK compilation, UCP on-board inference, performance and accuracy evaluation, this manual modularizes path knowledge, stage dependencies, and verification processes, enabling Agents to complete end-to-end optimization from floating-point models to on-board deployment in a streamlined workflow.
+A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenarios. Floating-point deployment defaults to PTQ; PyTorch and similar models can be exported to supported ONNX first. QAT is considered when explicitly requested or when PTQ still misses the target after support checks and tuning. The skills also cover HBDK compilation, UCP on-board inference, performance, and accuracy evaluation.
 
-> Current release: `v1.0.2`.
+The OE Docker image tag must match the installed OE package version; for example, OE 3.7.0 uses the `v3.7.0` image tag.
+
+> Current development version: `v1.1.0`.
 
 # Features
 
@@ -14,7 +16,7 @@ A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenario
 
 * Environment and Board Detection: Automatically detects development board model, OE package version, local Python/CUDA/PyTorch compatibility, and creates a venv with required installations as needed.
 
-* Accuracy Tuning: QAT adaptation and export, PTQ quantization construction, mixed-precision tuning, training-deployment consistency debugging, cosine similarity analysis.
+* Accuracy Tuning: standard PTQ first; QAT adaptation and export when requested or when PTQ is unsuitable, plus mixed-precision tuning, training-deployment consistency debugging, and cosine similarity analysis.
 
 * Performance Analysis: Perfetto trace capture and analysis, `hb_analyzer` performance bottleneck localization, on-board BPU/DDR/memory resource monitoring.
 
@@ -195,7 +197,7 @@ OE-Skills/
 
 | Skill                        | Function                     | Trigger Scenarios                                       |
 | ---------------------------- | ---------------------- | ------------------------------------------ |
-| s-plugin-adaptation         | Floating PyTorch model QAT tool adaptation | Adapting a model for `horizon_plugin_pytorch`              |
+| s-plugin-adaptation         | Floating PyTorch model QAT tool adaptation | Use `horizon_plugin_pytorch` when QAT/plugin adaptation is requested |
 | s-plugin-export             | QAT model export to HBIR IR       | Exporting QAT model via `hbdk4.export`                   |
 | s-plugin-hbdk-generating    | Full quantization‑to‑compilation code generation           | Covering multiple quantization and compilation steps simultaneously                              |
 | s-plugin-model-check-result | Quantization config check result analysis             | Analyzing `model_check_result.txt` to locate structure/qconfig issues |
@@ -208,7 +210,7 @@ OE-Skills/
 
 | Skill                            | Function           | Trigger Scenarios                                   |
 | -------------------------------- | ------------ | -------------------------------------- |
-| hmct-workflow                    | Model conversion and accuracy tuning entry | HMCT, model conversion, model quantization, PTQ, accuracy tuning, node sensitivity          |
+| hmct-workflow                    | Model conversion and accuracy tuning entry | Standard floating-point ONNX/Caffe PTQ; PyTorch exported to ONNX for PTQ; accuracy tuning and node sensitivity |
 | s-hmct-cosine-similarity-tuning | PTQ accuracy tuning workflow  | cosine similarity below target (default ≥0.99), mixed‑precision fallback |
 
 ### UCP Module (On‑board Inference)

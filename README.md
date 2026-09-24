@@ -2,9 +2,11 @@
   <b>中文</b> | <a href="README.en.md">English</a>
 </p>
 
-> 面向 D Robotics OpenExplorer（OE）工具链场景的 Agent Skills 集合。围绕 PTQ/QAT 量化、HBDK 编译、UCP 板端推理、性能与精度评估等核心环节，将路径知识、阶段依赖和验证流程模块化，支持 Agent 按流程完成从浮点模型到板端部署的端到端优化。
+> 面向 D Robotics OpenExplorer（OE）工具链场景的 Agent Skills 集合。普通浮点模型默认先尝试 PTQ；PyTorch 等模型可先导出为受支持的 ONNX。只有用户明确选择 QAT，或 PTQ 经检查与调优仍无法达到目标时，才评估 QAT。Skills 还覆盖 HBDK 编译、UCP 板端推理、性能与精度评估。
+>
+> OE Docker 镜像的版本标签应与已安装的 OE package 版本一致，例如 OE 3.7.0 使用 `v3.7.0` 镜像标签。
 
-> 当前发布版本：`v1.0.2`。
+> 当前开发版本：`v1.1.0`。
 
 # 功能介绍
 
@@ -14,7 +16,7 @@
 
 * **环境与板卡检测**：自动探测开发板型号、OE 包版本、本地 Python/CUDA/PyTorch 匹配，按需创建 venv 安装
 
-* **精度调优**：QAT 适配与导出、PTQ 量化构建、混合精度调优、训练-部署一致性 debug、Cosine Similarity
+* **精度调优**：优先使用标准 PTQ 流程；按明确需求或 PTQ 评测结果使用 QAT 适配与导出、混合精度调优、训练-部署一致性 debug、Cosine Similarity
 
 * **性能分析**：Perfetto trace 抓取与分析、`hb_analyzer` 性能瓶颈定位、板端 BPU/DDR/内存资源监控
 
@@ -91,7 +93,7 @@
 | 量化配置检查      | 帮我分析 model\_check\_result.txt，看看量化配置哪里有问题                                                                      | s-plugin-model-check-result     |
 | 编写hbm评测代码   | 帮我评测一下`xxx.hbm`的精度，calib评测代码为`val.py`，开发板`xx.xx.xx.xx`。若网络延迟较高，减少评测帧数到100                                      | s-ucp-hbm-infer                 |
 | 编写hbm部署代码   | 我有四个小模型，放在`{model_path}`，这几个模型间没有数据依赖，可同时推理，帮我写一下ucp部署代码，测试使用开发板`xx.xx.xx.xx`                                  | s-ucp-infer-generating          |
-| 单算子测试验证     | 帮我写一个 Conv2d 的量化编译全流程代码，输入是 (1, 3, 32, 32)，march 为 nash-p                                                      | s-plugin-hbdk-generating        |
+| QAT 编译示例     | 用 `horizon_plugin_pytorch` 给 Conv2d 写 QAT 校准、训练和 HBM 编译示例代码，输入是 (1, 3, 32, 32)，目标为 RDK S600 | s-plugin-hbdk-generating        |
 | onnx模型部署    | 需综合调用多个skill，具体使用经验请参考文档[onnx模型部署全流程示例](docs/zh/onnx-deployment/index.md)    |                                  |
 | pytorch模型部署 | 需综合调用多个skill，具体使用经验请参考文档[pytorch模型部署全流程示例](docs/zh/pytorch-deployment/index.md) |                                  |
 
@@ -132,7 +134,7 @@ OE-Skills/
 
 ### 顶层路由 Skills
 
-`drobotics-router` 是工具链入口，处理 PTQ/QAT 量化编译、板端部署、性能精度评估等请求，并路由到对应子 Skill。环境检测类 Skill 在板端任务或工具链操作触发时按需调用。
+`drobotics-router` 是工具链入口。普通浮点模型部署优先走 OE 标准 PTQ；PyTorch 等模型先导出为支持的 ONNX。用户明确选择 QAT 或 PTQ 不适用时再走 QAT 插件 Skills。环境检测类 Skill 在板端任务或工具链操作触发时按需调用。
 
 | Skill                    | 功能           | 触发场景                                   |
 | ------------------------ | ------------ | -------------------------------------- |
@@ -154,7 +156,7 @@ OE-Skills/
 
 | Skill                        | 功能                     | 触发场景                                       |
 | ---------------------------- | ---------------------- | ------------------------------------------ |
-| s-plugin-adaptation         | 浮点 PyTorch 模型 QAT 工具适配 | 为模型适配`horizon_plugin_pytorch`              |
+| s-plugin-adaptation         | 浮点 PyTorch 模型 QAT 工具适配 | 用户明确要求 QAT / 插件适配时使用 `horizon_plugin_pytorch` |
 | s-plugin-export             | QAT 模型导出 HBIR IR       | `hbdk4.export` 导出 QAT 模型                   |
 | s-plugin-hbdk-generating    | 量化到编译全流程代码生成           | 同时覆盖量化和编译多个步骤                              |
 | s-plugin-model-check-result | 量化配置检查结果分析             | 分析`model_check_result.txt`，定位结构/qconfig 问题 |
@@ -166,7 +168,7 @@ OE-Skills/
 
 | Skill                            | 功能           | 触发场景                                   |
 | -------------------------------- | ------------ | -------------------------------------- |
-| hmct-workflow                    | 模型转换与精度调优总入口 | HMCT、模型转换、模型量化、PTQ、精度调优、节点敏感度          |
+| hmct-workflow                    | 模型转换与精度调优总入口 | 普通浮点 ONNX/Caffe PTQ；PyTorch 导出 ONNX 后 PTQ；精度调优、节点敏感度 |
 | s-hmct-cosine-similarity-tuning | PTQ 精度调优工作流  | Cosine Similarity 不达标（默认 ≥0.99）、混合精度回退 |
 
 ### UCP 模块（板端推理）
