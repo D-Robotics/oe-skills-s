@@ -31,7 +31,7 @@ Based on the above prompt, five stages were identified: Environment Setup, Model
 ## Detailed Sub-stage Plan
 
 ```plain&#x20;text
-Based on the top-level plan and referring to .horizon/HORIZON.md, sequentially break down the detailed sub-plans for each stage before execution. Each step in the sub-plan should be a concrete, immediately executable action. Requirements: 1. Keep the number of steps between 5 and 10. 2. Describe each step in one sentence, containing only one clear action. 3. Include the skills or documents to reference, as well as the key APIs to use.
+Based on the top-level plan and referring to .drobotics-s/DROBOTICS-S.md, sequentially break down the detailed sub-plans for each stage before execution. Each step in the sub-plan should be a concrete, immediately executable action. Requirements: 1. Keep the number of steps between 5 and 10. 2. Describe each step in one sentence, containing only one clear action. 3. Include the skills or documents to reference, as well as the key APIs to use.
 
 OE development package path: /package/02_OE/horizon_j6_open_explorer_{version}
 ```
@@ -40,7 +40,7 @@ OE development package path: /package/02_OE/horizon_j6_open_explorer_{version}
 
 It is recommended to perform the following checks:
 
-* In addition to the necessary dependencies for the floating-point model, the PyTorch quantization environment should at least include the quantization tools `horizon_plugin_pytorch` and `horizon_plugin_profiler`, the compilation tool `hbdk4-compiler`, the performance evaluation tool `hbdk4-runtime`, and the HBM accuracy evaluation tool `hbm_infer`. Check the packages the agent plans to install, if it intends to install non-essential packages such as `horizon-tc-ui`, instruct it to skip installation if dependency conflicts arise, and only install the four essential tool packages.
+* In addition to the necessary dependencies for the floating-point model, the PyTorch quantization environment should at least include the quantization tools `horizon_plugin_pytorch` and `horizon_plugin_profiler`, the compilation tool `hbdk4-compiler`, the performance evaluation tool `hbdk4-runtime`, and the HBM accuracy evaluation tool `hbm_infer`. Check the packages the agent plans to install, if it intends to install non-essential packages such as `s-tc-ui`, instruct it to skip installation if dependency conflicts arise, and only install the four essential tool packages.
 
 * `horizon_plugin_pytorch` supports only a limited set of torch versions. The current OE development package provides only torch 2.3, 2.6, 2.8, and 2.10.0. Based on the floating-point model requirements, guide the agent to restrict torch installation to these four versions.
 

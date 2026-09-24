@@ -74,7 +74,7 @@ If no development board is available, guide the agent to use `quantized.bc` to c
 
 ## Phased Execution
 
-> If you notice that the agent spends a long time debugging during use, you can prompt it to use D Robotics‑provided skills to improve efficiency. Example dialogue: It is recommended to check the skills under .horizon.
+> If you notice that the agent spends a long time debugging during use, you can prompt it to use D Robotics‑provided skills to improve efficiency. Example dialogue: It is recommended to check the skills under .drobotics-s.
 
 Based on the detailed plans above, the agent completed quantization tuning, model compilation, on‑board code writing, and consistency verification in about 10 minutes.
 

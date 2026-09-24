@@ -4,7 +4,7 @@
 
 A collection of Agent skills for D Robotics OpenExplorer (OE) toolchain scenarios. Centered around core steps such as PTQ/QAT quantization, HBDK compilation, UCP on-board inference, performance and accuracy evaluation, this manual modularizes path knowledge, stage dependencies, and verification processes, enabling Agents to complete end-to-end optimization from floating-point models to on-board deployment in a streamlined workflow.
 
-> Current release: `v1.0.1`.
+> Current release: `v1.0.2`.
 
 # Features
 
@@ -143,7 +143,7 @@ Install this skill: https://github.com/D-Robotics/oe-skills-s
 OE-Skills/
 ├── README.md                # Chinese README
 ├── README.en.md             # This file
-├── setup.sh                 # Installation script, deploys horizon/ resources to target project .horizon/
+├── setup.sh                 # Installation script, deploys drobotics-s/ resources to target project .drobotics-s/
 ├── docs/                    # Deployment full-process example documents
 │   ├── zh/                  # Chinese docs
 │   │   ├── onnx-deployment/  # ONNX model deployment full example
@@ -151,8 +151,8 @@ OE-Skills/
 │   └── en/                  # English docs
 │       ├── onnx-deployment/  # ONNX model deployment full example
 │       └── pytorch-deployment/  # PyTorch model deployment full example
-├── horizon/                 # Resource directory (copied to target project during installation)
-│   ├── HORIZON.md           # Workspace rules and usage instructions
+├── drobotics-s/                 # Resource directory (copied to target project during installation)
+│   ├── DROBOTICS-S.md           # Workspace rules and usage instructions
 │   ├── VERSION              # Current version number
 │   ├── skill-index.json     # Skill index (module, path, description, trigger conditions)
 │   ├── docs/                # D Robotics toolchain offline documentation
@@ -162,7 +162,7 @@ OE-Skills/
 │       ├── plugin/          # D Robotics Plugin (QAT quantization)
 │       ├── hmct/            # HMCT / PTQ quantization
 │       ├── ucp/             # UCP / on-board inference
-│       ├── horizon_tc_ui/   # Visualization analysis tools
+│       ├── tc_ui/   # Visualization analysis tools
 │       └── llm/             # LLM quantization and compression
 ```
 
@@ -229,7 +229,7 @@ OE-Skills/
 | Skill                   | Function                    | Trigger Scenarios                                                                             |
 | ----------------------- | --------------------- | -------------------------------------------------------------------------------- |
 | hb-analyzer-performance | hb\_analyzer model performance analysis   | Model performance/latency/bandwidth/BPU utilization/bottleneck analysis                                                        |
-| horizon-tc-ui           | OpenExplorer CLI tool integration | hb\_compile/hb\_model\_info/hb\_verifier/hb\_analyzer, YAML config, PTQ quantization, HBIR/HBM artifacts |
+| s-tc-ui           | OpenExplorer CLI tool integration | hb\_compile/hb\_model\_info/hb\_verifier/hb\_analyzer, YAML config, PTQ quantization, HBIR/HBM artifacts |
 
 ### LLM Module (Quantization and Compression)
 

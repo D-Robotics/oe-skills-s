@@ -30,7 +30,7 @@
 ## 2. **子阶段详细 Plan**
 
 ```plain&#x20;text
-依据顶层计划，参考.horizon/HORIZON.md依次拆解生成前每个阶段的详细子计划。子计划中每个步骤应是可立即执行的具体动作。要求：1. 步骤数量控制在 5~10 个 2.每步用一句话描述，只包含一个明确动作 3.需要包含应参考的skill或文档，以及使用的关键api。
+依据顶层计划，参考.drobotics-s/DROBOTICS-S.md依次拆解生成前每个阶段的详细子计划。子计划中每个步骤应是可立即执行的具体动作。要求：1. 步骤数量控制在 5~10 个 2.每步用一句话描述，只包含一个明确动作 3.需要包含应参考的skill或文档，以及使用的关键api。
 OE开发包路径：/package/02_OE/horizon_j6_open_explorer_{version}
 ```
 
@@ -38,7 +38,7 @@ OE开发包路径：/package/02_OE/horizon_j6_open_explorer_{version}
 
 建议做如下检查：
 
-1. pytorch量化的环境中除了浮点模型的必要依赖之外，应至少包含**量化工具**`horizon_plugin_pytorch` & `horizon_plugin_profiler`，**编译工具**`hbdk4-compiler`，**性能评测工具**`hbdk4-runtime`，hbm**精度评测工具**`hbm_infer`。查看agent计划安装的工具包，若其计划安装`horizon-tc-ui`等非必需安装包，提示其安装过程中若发现环境冲突应跳过安装，仅安装上必须的四个工具包即可。
+1. pytorch量化的环境中除了浮点模型的必要依赖之外，应至少包含**量化工具**`horizon_plugin_pytorch` & `horizon_plugin_profiler`，**编译工具**`hbdk4-compiler`，**性能评测工具**`hbdk4-runtime`，hbm**精度评测工具**`hbm_infer`。查看agent计划安装的工具包，若其计划安装`s-tc-ui`等非必需安装包，提示其安装过程中若发现环境冲突应跳过安装，仅安装上必须的四个工具包即可。
 
 2. `horizon_plugin_pytorch`支持的torch版本有限，当前OE开发包中仅提供了torch2.3/2.6/2.8/2.10.0的开发包，建议依据浮点模型要求，引导agent安装torch时限定在这四个版本内。
 

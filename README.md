@@ -4,7 +4,7 @@
 
 > 面向 D Robotics OpenExplorer（OE）工具链场景的 Agent Skills 集合。围绕 PTQ/QAT 量化、HBDK 编译、UCP 板端推理、性能与精度评估等核心环节，将路径知识、阶段依赖和验证流程模块化，支持 Agent 按流程完成从浮点模型到板端部署的端到端优化。
 
-> 当前发布版本：`v1.0.1`。
+> 当前发布版本：`v1.0.2`。
 
 # 功能介绍
 
@@ -103,7 +103,7 @@
 OE-Skills/
 ├── README.md                # 本文件
 ├── README.en.md             # English README
-├── setup.sh                 # 安装脚本，将 horizon/ 资源铺设到目标项目 .horizon/
+├── setup.sh                 # 安装脚本，将 drobotics-s/ 资源铺设到目标项目 .drobotics-s/
 ├── docs/                    # 部署全流程示例文档
 │   ├── zh/                  # 中文文档
 │   │   ├── onnx-deployment/  # ONNX 模型部署全流程示例
@@ -111,8 +111,8 @@ OE-Skills/
 │   └── en/                  # 英文文档
 │       ├── onnx-deployment/  # ONNX 模型部署全流程示例（英文版）
 │       └── pytorch-deployment/  # PyTorch 模型部署全流程示例（英文版）
-├── horizon/                 # 资源目录（安装时复制到目标项目）
-│   ├── HORIZON.md           # 工作区规则和使用说明
+├── drobotics-s/                 # 资源目录（安装时复制到目标项目）
+│   ├── DROBOTICS-S.md           # 工作区规则和使用说明
 │   ├── VERSION              # 当前版本号
 │   ├── skill-index.json     # Skill 索引（模块、路径、描述、触发条件）
 │   ├── docs/                # D Robotics 工具链离线文档
@@ -122,7 +122,7 @@ OE-Skills/
 │       ├── plugin/          # D Robotics Plugin（QAT 量化）
 │       ├── hmct/            # HMCT / PTQ 量化
 │       ├── ucp/             # UCP / 板端推理
-│       ├── horizon_tc_ui/   # 可视化分析工具
+│       ├── tc_ui/   # 可视化分析工具
 │       └── llm/             # LLM 量化与压缩
 ```
 
@@ -185,7 +185,7 @@ OE-Skills/
 | Skill                   | 功能                    | 触发场景                                                                             |
 | ----------------------- | --------------------- | -------------------------------------------------------------------------------- |
 | hb-analyzer-performance | hb\_analyzer 模型性能分析   | 模型文件性能/延时/带宽/BPU 利用率/瓶颈分析                                                        |
-| horizon-tc-ui           | OpenExplorer CLI 工具集成 | hb\_compile/hb\_model\_info/hb\_verifier/hb\_analyzer、YAML 配置、PTQ 量化、HBIR/HBM 产物 |
+| s-tc-ui           | OpenExplorer CLI 工具集成 | hb\_compile/hb\_model\_info/hb\_verifier/hb\_analyzer、YAML 配置、PTQ 量化、HBIR/HBM 产物 |
 
 ### LLM 模块（量化与压缩）
 

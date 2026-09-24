@@ -36,8 +36,8 @@ bash "$RESOURCE_DIR/setup.sh" "$PROJECT_ROOT"
 
 这条命令会：
 
-- 在 `PROJECT_ROOT` 下创建 `.horizon/` 目录
-- 铺设 docs、skills、HORIZON.md、skill-index.json、VERSION
+- 在 `PROJECT_ROOT` 下创建 `.drobotics-s/` 目录
+- 铺设 docs、skills、DROBOTICS-S.md、skill-index.json、VERSION
 - 记录 `INSTALLED_REF`（安装来源锚点；未用 `--ref` 时回退为 VERSION 值）
 - 跳过含 `eval.json` 的 `test/` 目录
 - 向 `CLAUDE.md` / `AGENTS.md` 注入路由规则（幂等，不会重复注入）
@@ -48,23 +48,23 @@ bash "$RESOURCE_DIR/setup.sh" "$PROJECT_ROOT"
 bash "$RESOURCE_DIR/setup.sh" --update --ref v1.0.0 "$PROJECT_ROOT"
 ```
 
-`--update` 先比较已安装 `.horizon/VERSION` 与资源 VERSION：相同则直接跳过（幂等）；不同则**重建** `.horizon/`（先删除再铺设，旧版残留文件会被清除，但用户在 `.horizon/` 内的本地修改也会被丢弃）。`--force` 在版本相同时强制重建。`--ref` 记录进 `INSTALLED_REF` 供安装器比对 registry。
+`--update` 先比较已安装 `.drobotics-s/VERSION` 与资源 VERSION：相同则直接跳过（幂等）；不同则**重建** `.drobotics-s/`（先删除再铺设，旧版残留文件会被清除，但用户在 `.drobotics-s/` 内的本地修改也会被丢弃）。`--force` 在版本相同时强制重建。`--ref` 记录进 `INSTALLED_REF` 供安装器比对 registry。
 
 ## 5. 安装后检查
 
 ```bash
-test -f "$PROJECT_ROOT/.horizon/HORIZON.md"
-test -f "$PROJECT_ROOT/.horizon/VERSION"
-test -f "$PROJECT_ROOT/.horizon/INSTALLED_REF"
-test -f "$PROJECT_ROOT/.horizon/skill-index.json"
-test -f "$PROJECT_ROOT/.horizon/skills/drobotics-router/SKILL.md"
+test -f "$PROJECT_ROOT/.drobotics-s/DROBOTICS-S.md"
+test -f "$PROJECT_ROOT/.drobotics-s/VERSION"
+test -f "$PROJECT_ROOT/.drobotics-s/INSTALLED_REF"
+test -f "$PROJECT_ROOT/.drobotics-s/skill-index.json"
+test -f "$PROJECT_ROOT/.drobotics-s/skills/drobotics-router/SKILL.md"
 ```
 
 ## 6. 初始化后如何使用
 
-1. 先看 `.horizon/HORIZON.md` 了解工作区规则和内置 skill 清单
-2. 查找具体 skill 路径时，以 `.horizon/skill-index.json` 为准
-3. 当任务属于 D Robotics 范畴但尚未明确落到某个具体 skill 时，先走 `.horizon/skills/drobotics-router/SKILL.md` 做顶层路由
+1. 先看 `.drobotics-s/DROBOTICS-S.md` 了解工作区规则和内置 skill 清单
+2. 查找具体 skill 路径时，以 `.drobotics-s/skill-index.json` 为准
+3. 当任务属于 D Robotics 范畴但尚未明确落到某个具体 skill 时，先走 `.drobotics-s/skills/drobotics-router/SKILL.md` 做顶层路由
 4. 再由 drobotics-router 顶层 skill 分流到具体的子 skill
 
 ## 7. 配置 oe-mcp（按需）
@@ -102,6 +102,6 @@ codex mcp add oe-mcp --url https://mcp.oe.horizon.auto/mcp
 
 ## 8. 常见问题
 
-- 如果 `setup.sh` 报找不到 `horizon/` 目录，确认资源目录结构完整
-- 如果 `.horizon/` 已存在：直接重跑安装是覆盖式铺设（合并，不删旧文件）；升级请用 `--update`（重建式，先删后铺、无旧文件残留，但 `.horizon/` 内的本地修改会丢失）
+- 如果 `setup.sh` 报找不到 `drobotics-s/` 目录，确认资源目录结构完整
+- 如果 `.drobotics-s/` 已存在：直接重跑安装是覆盖式铺设（合并，不删旧文件）；升级请用 `--update`（重建式，先删后铺、无旧文件残留，但 `.drobotics-s/` 内的本地修改会丢失）
 - `setup.sh` 只会向已有的 `CLAUDE.md` / `AGENTS.md` 注入路由规则；如果两个文件都不存在，必须先按第 3 步创建对应文件再执行安装
